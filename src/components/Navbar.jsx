@@ -103,9 +103,9 @@ export default function Navbar() {
               </Link>
               <Link
                 to="/register"
-                className="px-5 py-2.5 rounded-xl bg-gov-red text-white text-sm font-semibold hover:bg-gov-red-dark transition-all duration-200 shadow-sm shadow-gov-red/20 hover:shadow-md hover:shadow-gov-red/30 transform hover:-translate-y-0.5"
+                className="px-5 py-2.5 rounded-xl bg-gov-red-dark text-white text-sm font-semibold hover:bg-gov-red-darker transition-all duration-200 shadow-sm shadow-gov-red-dark/20 hover:shadow-md hover:shadow-gov-red-dark/30 transform hover:-translate-y-0.5"
               >
-                Register as Donor
+                Become a Donor
               </Link>
             </div>
 
@@ -113,7 +113,7 @@ export default function Navbar() {
             <div className="md:hidden flex items-center gap-3">
               <Link
                 to="/register"
-                className="px-3 py-1.5 rounded-lg bg-gov-red text-white text-xs font-semibold hover:bg-gov-red-dark"
+                className="px-3 py-1.5 rounded-lg bg-gov-red-dark text-white text-xs font-semibold hover:bg-gov-red-darker"
               >
                 Register
               </Link>
@@ -184,9 +184,9 @@ export default function Navbar() {
               <Link
                 to="/register"
                 onClick={() => setIsOpen(false)}
-                className="w-full text-center py-2.5 rounded-lg bg-gov-red text-white font-semibold hover:bg-gov-red-dark shadow-sm"
+                className="w-full text-center py-2.5 rounded-lg bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker shadow-sm"
               >
-                Register as Donor
+                Become a Donor
               </Link>
               <div className="mt-4 p-3 bg-slate-50 rounded-lg flex items-center gap-3">
                 <ShieldAlert className="w-5 h-5 text-gov-blue shrink-0" />

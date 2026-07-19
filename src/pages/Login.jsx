@@ -254,7 +254,7 @@ export default function Login() {
               <div className="text-center text-xs text-slate-500 pt-2">
                 Don't have a profile yet?{' '}
                 <Link to="/register" className="text-gov-red font-bold hover:underline">
-                  Register as Donor
+                  Become a Donor
                 </Link>
               </div>
             </div>

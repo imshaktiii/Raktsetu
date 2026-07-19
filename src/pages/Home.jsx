@@ -155,9 +155,9 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 to="/register"
-                className="px-8 py-3.5 rounded-xl bg-gov-red text-white font-semibold hover:bg-gov-red-dark transition-all shadow-lg shadow-gov-red/20 text-center hover:scale-102"
+                className="px-8 py-3.5 rounded-xl bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker transition-all shadow-lg shadow-gov-red-dark/20 text-center hover:scale-102"
               >
-                Register as Donor
+                Become a Donor
               </Link>
               <Link
                 to="/banks"
