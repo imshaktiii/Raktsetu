@@ -24,6 +24,7 @@ export default function Navbar() {
     { name: 'Search Blood', path: '/search-blood' },
     { name: 'Emergency Request', path: '/emergency-request' },
     { name: 'Profile', path: '/profile' },
+    { name: 'Notifications', path: '/notifications' },
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Hospital Portal', path: '/hospital-dashboard' },
     { name: 'Blood Bank Portal', path: '/bank-dashboard' },
