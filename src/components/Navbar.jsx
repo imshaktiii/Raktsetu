@@ -24,6 +24,7 @@ export default function Navbar() {
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Hospital Portal', path: '/hospital-dashboard' },
     { name: 'Blood Bank Portal', path: '/bank-dashboard' },
+    { name: 'Admin Portal', path: '/admin-dashboard' },
     { name: 'About', path: '/about' },
     { name: 'Blood Camps', path: '/camps' },
     { name: 'Blood Banks', path: '/banks' },

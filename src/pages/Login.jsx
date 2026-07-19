@@ -72,6 +72,8 @@ export default function Login() {
           navigate('/hospital-dashboard');
         } else if (role === 'bank') {
           navigate('/bank-dashboard');
+        } else if (role === 'admin') {
+          navigate('/admin-dashboard');
         } else {
           navigate('/dashboard');
         }
@@ -148,7 +150,7 @@ export default function Login() {
               <div>
                 <span className="block text-xs font-bold text-slate-500 uppercase mb-2">Select Portal Workspace</span>
                 <div className="grid grid-cols-4 gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-                  {['donor', 'hospital', 'bank', 'organizer'].map((r) => (
+                  {['donor', 'hospital', 'bank', 'admin'].map((r) => (
                     <button
                       key={r}
                       type="button"
@@ -163,7 +165,7 @@ export default function Login() {
                           : 'text-slate-500 hover:text-slate-800'
                       }`}
                     >
-                      {r === 'bank' ? 'Blood Bank' : r === 'organizer' ? 'Organizer' : r}
+                      {r === 'bank' ? 'Blood Bank' : r === 'admin' ? 'Super Admin' : r}
                     </button>
                   ))}
                 </div>
