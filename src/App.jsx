@@ -8,6 +8,7 @@ import BloodBanks from './pages/BloodBanks';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import Dashboard from './pages/Dashboard';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import './App.css';
@@ -29,6 +30,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
