@@ -13,6 +13,7 @@ import HospitalDashboard from './pages/HospitalDashboard';
 import BloodBankDashboard from './pages/BloodBankDashboard';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import SearchBlood from './pages/SearchBlood';
+import EmergencyRequest from './pages/EmergencyRequest';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import './App.css';
@@ -39,6 +40,7 @@ function App() {
             <Route path="/bank-dashboard" element={<BloodBankDashboard />} />
             <Route path="/admin-dashboard" element={<SuperAdminDashboard />} />
             <Route path="/search-blood" element={<SearchBlood />} />
+            <Route path="/emergency-request" element={<EmergencyRequest />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
