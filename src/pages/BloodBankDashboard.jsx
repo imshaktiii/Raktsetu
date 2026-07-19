@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DashboardCard from '../components/DashboardCard';
 import { 
   ResponsiveContainer, 
   BarChart, 
@@ -316,19 +317,12 @@ export default function BloodBankDashboard() {
 
               {/* Dashboard Summary Cards */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {[
-                  { title: 'Total Blood Units', count: inventoryList.reduce((acc, x) => acc + x.units, 0), color: 'text-gov-blue border-gov-blue/10 bg-gov-blue/5' },
-                  { title: 'Low Stock Groups', count: inventoryList.filter(x => x.status === 'Low Stock' || x.status === 'Critical').length, color: 'text-amber-700 border-amber-100 bg-amber-50/50 font-bold' },
-                  { title: "Today's Intake", count: '3 units', color: 'text-emerald-700 border-emerald-100 bg-emerald-50/50' },
-                  { title: 'Pending Orders', count: requests.filter(r => r.status === 'Pending Approval').length, color: 'text-slate-700 border-slate-200 bg-slate-100/50' },
-                  { title: 'Expiring Soon', count: 3, color: 'text-gov-red border-gov-red/10 bg-gov-red/5' },
-                  { title: 'Active Camps', count: camps.filter(c => c.status === 'Active').length, color: 'text-purple-700 border-purple-100 bg-purple-50/50' }
-                ].map((card, i) => (
-                  <div key={i} className={`p-4 rounded-2xl border shadow-sm flex flex-col justify-between h-[100px] ${card.color}`}>
-                    <span className="text-[10px] uppercase font-bold tracking-wider opacity-75">{card.title}</span>
-                    <span className="text-3xl font-black">{card.count}</span>
-                  </div>
-                ))}
+                <DashboardCard title="Total Blood Units" count={inventoryList.reduce((acc, x) => acc + x.units, 0)} color="blue" />
+                <DashboardCard title="Low Stock Groups" count={inventoryList.filter(x => x.status === 'Low Stock' || x.status === 'Critical').length} color="gold" />
+                <DashboardCard title="Today's Intake" count="3 units" color="emerald" />
+                <DashboardCard title="Pending Orders" count={requests.filter(r => r.status === 'Pending Approval').length} color="slate" />
+                <DashboardCard title="Expiring Soon" count={3} color="red" />
+                <DashboardCard title="Active Camps" count={camps.filter(c => c.status === 'Active').length} color="purple" />
               </div>
 
               {/* Recharts Analytics Charts Section */}

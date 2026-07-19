@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import DashboardCard from '../components/DashboardCard';
 import { 
   LayoutDashboard, 
   GitPullRequest, 
@@ -242,19 +243,12 @@ export default function HospitalDashboard() {
 
               {/* Widgets Dashboard Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {[
-                  { title: 'Total Requests', count: requestsList.length, color: 'text-gov-blue border-gov-blue/10 bg-gov-blue/5' },
-                  { title: 'Active Emergency', count: emergencyRequests.length, color: 'text-gov-red border-gov-red/10 bg-gov-red/5 font-bold' },
-                  { title: 'In-House Stock', count: inventory.reduce((acc, row) => acc + row.units, 0), color: 'text-emerald-700 border-emerald-100 bg-emerald-50/50' },
-                  { title: 'Nearby Banks', count: nearbyBanks.length, color: 'text-slate-700 border-slate-200 bg-slate-100/50' },
-                  { title: "Today's Donors", count: 4, color: 'text-purple-700 border-purple-100 bg-purple-50/50' },
-                  { title: 'Pending Approval', count: requestsList.filter(r => r.status === 'Pending Approval').length, color: 'text-gov-gold border-gov-gold/15 bg-gov-gold/5' }
-                ].map((widget, i) => (
-                  <div key={i} className={`p-4 rounded-2xl border shadow-sm flex flex-col justify-between h-[100px] ${widget.color}`}>
-                    <span className="text-[10px] uppercase font-bold tracking-wider opacity-75">{widget.title}</span>
-                    <span className="text-3xl font-black">{widget.count}</span>
-                  </div>
-                ))}
+                <DashboardCard title="Total Requests" count={requestsList.length} color="blue" />
+                <DashboardCard title="Active Emergency" count={emergencyRequests.length} color="red" />
+                <DashboardCard title="In-House Stock" count={inventory.reduce((acc, row) => acc + row.units, 0)} color="emerald" />
+                <DashboardCard title="Nearby Banks" count={nearbyBanks.length} color="slate" />
+                <DashboardCard title="Today's Donors" count={4} color="purple" />
+                <DashboardCard title="Pending Approval" count={requestsList.filter(r => r.status === 'Pending Approval').length} color="gold" />
               </div>
 
               {/* 12-Column Panel Layout */}

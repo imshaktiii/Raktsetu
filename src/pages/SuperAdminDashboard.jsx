@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DashboardCard from '../components/DashboardCard';
 import { 
   ResponsiveContainer, 
   BarChart, 
@@ -325,21 +326,12 @@ export default function SuperAdminDashboard() {
 
               {/* Dashboard Summary Cards Grid */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {[
-                  { title: 'Total Donors', count: '45,820', color: 'text-gov-blue border-gov-blue/10 bg-gov-blue/5' },
-                  { title: 'Hospitals', count: '1,240', color: 'text-purple-700 border-purple-100 bg-purple-50/50' },
-                  { title: 'Blood Banks', count: '580', color: 'text-emerald-700 border-emerald-100 bg-emerald-50/50' },
-                  { title: 'Blood Camps', count: '240', color: 'text-slate-700 border-slate-200 bg-slate-100/50' },
-                  { title: 'Blood Requests', count: '12,450', color: 'text-gov-gold border-gov-gold/15 bg-gov-gold/5' },
-                  { title: 'Emergency Cases', count: '42 active', color: 'text-gov-red border-gov-red/10 bg-gov-red/5 font-bold' }
-                ].map((card, i) => (
-                  <div key={i} className={`p-4 rounded-2xl border shadow-sm flex flex-col justify-between h-[100px] ${card.color} ${
-                    darkMode ? 'border-slate-800' : ''
-                  }`}>
-                    <span className="text-[10px] uppercase font-bold tracking-wider opacity-75">{card.title}</span>
-                    <span className="text-2xl font-black">{card.count}</span>
-                  </div>
-                ))}
+                <DashboardCard title="Total Donors" count="45,820" color="blue" className={darkMode ? 'border-slate-800' : ''} />
+                <DashboardCard title="Hospitals" count="1,240" color="purple" className={darkMode ? 'border-slate-800' : ''} />
+                <DashboardCard title="Blood Banks" count="580" color="emerald" className={darkMode ? 'border-slate-800' : ''} />
+                <DashboardCard title="Blood Camps" count="240" color="slate" className={darkMode ? 'border-slate-800' : ''} />
+                <DashboardCard title="Blood Requests" count="12,450" color="gold" className={darkMode ? 'border-slate-800' : ''} />
+                <DashboardCard title="Emergency Cases" count="42 active" color="red" className={darkMode ? 'border-slate-800' : ''} />
               </div>
 
               {/* Analytics Section preview (Donor Growth and Demand Supply) */}
