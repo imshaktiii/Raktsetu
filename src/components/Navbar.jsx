@@ -23,6 +23,7 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Search Blood', path: '/search-blood' },
     { name: 'Emergency Request', path: '/emergency-request' },
+    { name: 'Profile', path: '/profile' },
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Hospital Portal', path: '/hospital-dashboard' },
     { name: 'Blood Bank Portal', path: '/bank-dashboard' },
