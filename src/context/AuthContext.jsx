@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { authService } from '../api/authService';
+import { authAPI } from '../api/auth';
 
 const AuthContext = createContext(null);
 
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
     setError(null);
     try {
       // Expect response: { token: '...', user: { id: '...', name: '...', role: '...' } }
-      const data = await authService.login(credentials);
+      const data = await authAPI.login(credentials);
       
       localStorage.setItem('raktsetu_token', data.token);
       localStorage.setItem('raktsetu_user', JSON.stringify(data.user));
@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
       setUser(data.user);
       return data.user;
     } catch (err) {
-      const errMsg = err.response?.data?.message || 'Authentication failed. Please verify credentials.';
+      const errMsg = err.message || 'Authentication failed. Please verify credentials.';
       setError(errMsg);
       throw new Error(errMsg);
     } finally {
@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      const data = await authService.register(userData);
+      const data = await authAPI.register(userData);
       
       localStorage.setItem('raktsetu_token', data.token);
       localStorage.setItem('raktsetu_user', JSON.stringify(data.user));
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
       setUser(data.user);
       return data.user;
     } catch (err) {
-      const errMsg = err.response?.data?.message || 'Registration failed. Please check form parameters.';
+      const errMsg = err.message || 'Registration failed. Please check form parameters.';
       setError(errMsg);
       throw new Error(errMsg);
     } finally {
