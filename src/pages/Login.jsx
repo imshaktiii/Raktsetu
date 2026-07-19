@@ -10,18 +10,13 @@ import {
   Landmark, 
   Eye, 
   EyeOff, 
-  Loader2, 
-  ArrowLeft, 
-  Send,
-  Check
+  Loader2 
 } from 'lucide-react';
 
 export default function Login() {
   const [role, setRole] = useState('donor'); // donor, bank, organizer
   const [loginMethod, setLoginMethod] = useState('password'); // password, otp
   const [showPassword, setShowPassword] = useState(false);
-  const [forgotView, setForgotView] = useState(false);
-  const [forgotSuccess, setForgotSuccess] = useState(false);
   
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -42,8 +37,7 @@ export default function Login() {
       password: '',
       phone: '',
       otp: '',
-      rememberMe: false,
-      forgotEmail: ''
+      rememberMe: false
     }
   });
 
@@ -77,14 +71,6 @@ export default function Login() {
         navigate('/');
       }, 1500);
     }, 1500);
-  };
-
-  const onForgotSubmit = (_data) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setForgotSuccess(true);
-    }, 1200);
   };
 
   return (
@@ -138,7 +124,7 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Right Column: Dynamic Form (7 cols) */}
+        {/* Right Column: Login Form (7 cols) */}
         <div className="md:col-span-7 p-8 sm:p-10 flex flex-col justify-center">
           {success ? (
             <div className="text-center space-y-4 py-12 animate-pulse-soft">
@@ -150,86 +136,7 @@ export default function Login() {
                 <p className="text-xs text-slate-500 mt-1">Establishing secure session. Redirecting to workspace...</p>
               </div>
             </div>
-          ) : forgotView ? (
-            /* Forgot Password Flow */
-            <div className="space-y-6 animate-fade-in">
-              <div className="space-y-1">
-                <h3 className="font-bold text-slate-800 text-xl">Recover Password</h3>
-                <p className="text-xs text-slate-500">Provide your registered email to receive reset instructions</p>
-              </div>
-
-              {forgotSuccess ? (
-                <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 text-center space-y-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                    <Check className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-bold text-sm text-slate-800">Reset Email Dispatched</h4>
-                  <p className="text-[11px] text-slate-600 leading-relaxed">
-                    A secure password recovery link has been sent to your email. Please check your inbox and spam folders.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setForgotView(false);
-                      setForgotSuccess(false);
-                    }}
-                    className="mt-2 text-xs font-bold text-gov-blue hover:underline"
-                  >
-                    Return to Login
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit(onForgotSubmit)} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Registered Email</label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
-                      <input
-                        type="email"
-                        placeholder="e.g. name@domain.com"
-                        className={`w-full pl-10 pr-4 py-2.5 rounded-xl border focus:outline-none text-sm transition-colors ${
-                          errors.forgotEmail ? 'border-red-500 focus:border-red-500 bg-red-50/10' : 'border-slate-200 focus:border-gov-blue'
-                        }`}
-                        {...register('forgotEmail', { 
-                          required: 'Registered email is required',
-                          pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address format' }
-                        })}
-                      />
-                    </div>
-                    {errors.forgotEmail && <p className="text-red-500 text-xs mt-1">{errors.forgotEmail.message}</p>}
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 bg-gov-blue hover:bg-gov-blue-dark text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-colors cursor-pointer"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Validating Account...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        Send Password Recovery Link
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setForgotView(false)}
-                    className="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Login Gateway
-                  </button>
-                </form>
-              )}
-            </div>
           ) : (
-            /* Login Main Flow */
             <div className="space-y-6">
               {/* Role Selector Tabs */}
               <div>
@@ -305,13 +212,12 @@ export default function Login() {
                     <div>
                       <div className="flex justify-between items-center mb-1">
                         <label className="block text-xs font-bold text-slate-600 uppercase">Password</label>
-                        <button
-                          type="button"
-                          onClick={() => setForgotView(true)}
-                          className="text-[10px] text-gov-blue hover:underline font-bold cursor-pointer"
+                        <Link
+                          to="/forgot-password"
+                          className="text-[10px] text-gov-blue hover:underline font-bold"
                         >
                           Forgot Password?
-                        </button>
+                        </Link>
                       </div>
                       <div className="relative">
                         <KeyRound className="absolute left-3 top-3.5 w-4 h-4 text-slate-400" />
