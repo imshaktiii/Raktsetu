@@ -70,6 +70,8 @@ export default function Login() {
       setTimeout(() => {
         if (role === 'hospital') {
           navigate('/hospital-dashboard');
+        } else if (role === 'bank') {
+          navigate('/bank-dashboard');
         } else {
           navigate('/dashboard');
         }

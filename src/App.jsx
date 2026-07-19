@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
+import BloodBankDashboard from './pages/BloodBankDashboard';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import './App.css';
@@ -33,6 +34,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/hospital-dashboard" element={<HospitalDashboard />} />
+            <Route path="/bank-dashboard" element={<BloodBankDashboard />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
