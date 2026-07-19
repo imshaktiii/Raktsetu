@@ -22,6 +22,7 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Hospital Portal', path: '/hospital-dashboard' },
     { name: 'About', path: '/about' },
     { name: 'Blood Camps', path: '/camps' },
     { name: 'Blood Banks', path: '/banks' },

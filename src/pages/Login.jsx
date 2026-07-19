@@ -68,7 +68,11 @@ export default function Login() {
       setLoading(false);
       setSuccess(true);
       setTimeout(() => {
-        navigate('/dashboard');
+        if (role === 'hospital') {
+          navigate('/hospital-dashboard');
+        } else {
+          navigate('/dashboard');
+        }
       }, 1500);
     }, 1500);
   };
@@ -141,8 +145,8 @@ export default function Login() {
               {/* Role Selector Tabs */}
               <div>
                 <span className="block text-xs font-bold text-slate-500 uppercase mb-2">Select Portal Workspace</span>
-                <div className="grid grid-cols-3 gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
-                  {['donor', 'bank', 'organizer'].map((r) => (
+                <div className="grid grid-cols-4 gap-1.5 bg-slate-50 p-1.5 rounded-xl border border-slate-100">
+                  {['donor', 'hospital', 'bank', 'organizer'].map((r) => (
                     <button
                       key={r}
                       type="button"
@@ -151,7 +155,7 @@ export default function Login() {
                         setOtpSent(false); 
                         setValue('otp', '');
                       }}
-                      className={`py-2 rounded-lg text-xs font-bold capitalize transition-all cursor-pointer ${
+                      className={`py-2 rounded-lg text-[10px] sm:text-xs font-bold capitalize transition-all cursor-pointer ${
                         role === r 
                           ? 'bg-white text-gov-blue shadow-sm' 
                           : 'text-slate-500 hover:text-slate-800'
