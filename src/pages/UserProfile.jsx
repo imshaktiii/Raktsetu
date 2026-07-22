@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   User, 
   Mail, 
@@ -148,6 +149,81 @@ export default function UserProfile() {
             </button>
           </div>
 
+          {/* Card 1.5: National Blood Donor ID Card */}
+          <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8 space-y-6">
+            <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
+              <Award className="w-4.5 h-4.5 text-gov-red" />
+              <h3 className="font-extrabold text-sm text-slate-800 uppercase tracking-wider">National Donor Card</h3>
+            </div>
+
+            {/* The Digital ID Card container */}
+            <div id="donor-card-print" className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-905 text-white rounded-2xl p-6 relative overflow-hidden border border-slate-850 shadow-lg max-w-xs mx-auto space-y-6 aspect-[1.586/1]">
+              {/* Seal watermarks or accents */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gov-red/5 rounded-full blur-2xl pointer-events-none"></div>
+              
+              {/* Header */}
+              <div className="flex justify-between items-start border-b border-white/10 pb-3">
+                <div>
+                  <h4 className="font-black text-sm tracking-tight text-white flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-gov-red"></span>
+                    RAKTASETU
+                  </h4>
+                  <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold mt-0.5">National Blood Donor ID</p>
+                </div>
+                <span className="text-[8px] font-mono text-gov-gold-light bg-white/5 border border-white/10 px-1.5 py-0.5 rounded">
+                  RS-2026-000012
+                </span>
+              </div>
+
+              {/* Body (Name, Blood group, QR Code) */}
+              <div className="grid grid-cols-12 gap-4 items-center">
+                {/* Info (8 cols) */}
+                <div className="col-span-8 space-y-2">
+                  <div>
+                    <span className="block text-[7px] uppercase font-bold text-slate-400">Donor Name</span>
+                    <span className="text-xs font-bold text-white tracking-wide block">{profile.name}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[7px] uppercase font-bold text-slate-400">Blood Group</span>
+                    <span className="text-sm font-black text-gov-red-light tracking-wide block">{profile.bloodGroup}</span>
+                  </div>
+                </div>
+
+                {/* QR Code (4 cols) */}
+                <div className="col-span-4 flex justify-end">
+                  <div className="w-16 h-16 bg-white p-1 rounded-lg shadow-sm border border-slate-100 flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" className="w-full h-full text-slate-900" fill="currentColor">
+                      {/* Stylized QR Code grids */}
+                      <path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z" />
+                      <path d="M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z" />
+                      <path d="M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z" />
+                      <path d="M40,0 h10 v10 h-10 z M55,5 h10 v10 h-10 z M40,20 h20 v10 h-20 z" />
+                      <path d="M45,40 h15 v10 h-15 z M50,55 h10 v15 h-10 z M35,70 h10 v20 h-10 z" />
+                      <path d="M70,40 h10 v10 h-10 z M85,45 h15 v10 h-15 z M75,65 h10 v10 h-10 z M70,80 h30 v10 h-30 z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer */}
+              <div className="flex justify-between items-center text-[7px] text-slate-450 border-t border-white/5 pt-2">
+                <span>Ministry of Health & Family Welfare</span>
+                <span className="font-bold text-emerald-400">ACTIVE GRID</span>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <button
+              onClick={() => {
+                alert('Downloading National Blood Donor ID Card PDF... Status: Success!');
+              }}
+              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+            >
+              <FileText className="w-4 h-4 text-slate-655" />
+              Download Card
+            </button>
+          </div>
+
           {/* Card 2: Detailed Personal & Medical Information */}
           <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8 space-y-6">
             <div className="flex items-center gap-2 pb-4 border-b border-slate-100">
@@ -246,12 +322,12 @@ export default function UserProfile() {
                 {donations.map((dn, idx) => (
                   <div key={idx} className="p-3 rounded-xl border border-slate-50 bg-slate-50/50 text-xs flex justify-between items-center hover:bg-slate-50 transition-colors">
                     <span className="font-semibold text-slate-650 truncate max-w-[140px]">Certificate for {dn.id}</span>
-                    <button 
-                      onClick={() => alert('Appreciation Certificate PDF download triggered (Mock).')}
+                    <Link 
+                      to="/certificate/D-MOCK-9988"
                       className="px-2 py-1 bg-gov-blue hover:bg-gov-blue-dark text-white rounded font-bold text-[9px] cursor-pointer flex items-center gap-0.5"
                     >
                       PDF
-                    </button>
+                    </Link>
                   </div>
                 ))}
               </div>

@@ -10,6 +10,10 @@ const donorRoutes = require("./routes/donorRoutes");
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const requestRoutes = require("./routes/bloodRequestRoutes");
+const campRoutes = require("./routes/bloodCampRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
 
 const app = express();
 
@@ -28,6 +32,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/camps", campRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/certificate", certificateRoutes);
 
 
 // Home Route

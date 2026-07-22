@@ -11,7 +11,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import HospitalDashboard from './pages/HospitalDashboard';
 import BloodBankDashboard from './pages/BloodBankDashboard';
-import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import Admin from './pages/Admin';
 import SearchBlood from './pages/SearchBlood';
 import EmergencyRequest from './pages/EmergencyRequest';
 import UserProfile from './pages/UserProfile';
@@ -20,6 +20,7 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import SearchDonor from './pages/SearchDonor';
 import BloodRequests from './pages/BloodRequests';
+import Certificate from './pages/Certificate';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -59,7 +60,7 @@ function App() {
               } />
               <Route path="/admin-dashboard" element={
                 <ProtectedRoute allowedRoles={['admin']}>
-                  <SuperAdminDashboard />
+                  <Admin />
                 </ProtectedRoute>
               } />
               <Route path="/search-blood" element={<SearchBlood />} />
@@ -74,6 +75,11 @@ function App() {
               <Route path="/notifications" element={
                 <ProtectedRoute>
                   <NotificationCenter />
+                </ProtectedRoute>
+              } />
+              <Route path="/certificate/:donorId" element={
+                <ProtectedRoute>
+                  <Certificate />
                 </ProtectedRoute>
               } />
               <Route path="/contact" element={<Contact />} />
