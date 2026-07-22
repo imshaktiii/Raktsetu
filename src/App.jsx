@@ -18,6 +18,8 @@ import UserProfile from './pages/UserProfile';
 import NotificationCenter from './pages/NotificationCenter';
 import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
+import SearchDonor from './pages/SearchDonor';
+import BloodRequests from './pages/BloodRequests';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -61,6 +63,8 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/search-blood" element={<SearchBlood />} />
+              <Route path="/search-donor" element={<SearchDonor />} />
+              <Route path="/blood-requests" element={<BloodRequests />} />
               <Route path="/emergency-request" element={<EmergencyRequest />} />
               <Route path="/profile" element={
                 <ProtectedRoute>

@@ -66,5 +66,24 @@ export const donorsAPI = {
         ]);
       });
     }
+  },
+  searchDonors: async (bloodGroup, city) => {
+  try {
+    const response = await apiClient.get("/donors/search", {
+      params: {
+        bloodGroup,
+        city,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+
+    return {
+      success: false,
+      donors: [],
+    };
   }
+},
 };
