@@ -79,8 +79,7 @@ const uploadPhoto = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Profile image uploaded successfully",
-      profileImage: relativePath
+      image: relativePath
     });
   } catch (error) {
     console.error("Error uploading photo:", error);
