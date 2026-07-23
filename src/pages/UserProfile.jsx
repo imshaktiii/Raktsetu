@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { donorsAPI } from '../api/donors';
 import { 
   User, 
   Mail, 
@@ -17,11 +19,11 @@ import {
 } from 'lucide-react';
 
 export default function UserProfile() {
-  // Mock Profile State
+  const { user } = useAuth();
   const [profile, setProfile] = useState({
-    name: 'Shakti Prasad',
-    email: 'shakti.prasad@raktsetu.in',
-    phone: '98765 43210',
+    name: '',
+    email: '',
+    phone: '',
     dob: '1995-08-12',
     gender: 'Male',
     bloodGroup: 'O+',
@@ -30,6 +32,32 @@ export default function UserProfile() {
     conditions: 'None',
     address: 'Flat 402, Block C, Pragati Vihar, New Delhi - 110003'
   });
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await donorsAPI.getProfile();
+        if (data && data.success) {
+          const donor = data.donor;
+          setProfile({
+            name: donor.fullName || '',
+            email: donor.email || '',
+            phone: donor.phone || '',
+            dob: donor.dob || '1995-08-12',
+            gender: donor.gender || 'Male',
+            bloodGroup: donor.bloodGroup || 'O+',
+            weight: donor.weight || 72,
+            lastDonation: donor.lastDonationDate ? new Date(donor.lastDonationDate).toISOString().split('T')[0] : '2026-04-15',
+            conditions: donor.conditions || 'None',
+            address: donor.address || 'Flat 402, Block C, Pragati Vihar, New Delhi - 110003'
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load profile details:', err);
+      }
+    };
+    loadProfile();
+  }, []);
 
   // Donation History Mock Logs
   const donations = [
@@ -213,15 +241,25 @@ export default function UserProfile() {
             </div>
 
             {/* Action buttons */}
-            <button
-              onClick={() => {
-                alert('Downloading National Blood Donor ID Card PDF... Status: Success!');
-              }}
-              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-            >
-              <FileText className="w-4 h-4 text-slate-655" />
-              Download Card
-            </button>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => {
+                  alert('Downloading National Blood Donor ID Card PDF... Status: Success!');
+                }}
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <FileText className="w-4 h-4 text-slate-655" />
+                Download Card
+              </button>
+
+              <Link
+                to={`/certificate/${user?.id || user?._id || 'D-MOCK-9988'}`}
+                className="w-full py-2.5 bg-gov-red hover:bg-gov-red-dark text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md text-center"
+              >
+                <Award className="w-4 h-4 text-white animate-pulse" />
+                View Blood Donation Certificate
+              </Link>
+            </div>
           </div>
 
           {/* Card 2: Detailed Personal & Medical Information */}
@@ -323,7 +361,7 @@ export default function UserProfile() {
                   <div key={idx} className="p-3 rounded-xl border border-slate-50 bg-slate-50/50 text-xs flex justify-between items-center hover:bg-slate-50 transition-colors">
                     <span className="font-semibold text-slate-650 truncate max-w-[140px]">Certificate for {dn.id}</span>
                     <Link 
-                      to="/certificate/D-MOCK-9988"
+                      to={`/certificate/${user?.id || user?._id || 'D-MOCK-9988'}`}
                       className="px-2 py-1 bg-gov-blue hover:bg-gov-blue-dark text-white rounded font-bold text-[9px] cursor-pointer flex items-center gap-0.5"
                     >
                       PDF
