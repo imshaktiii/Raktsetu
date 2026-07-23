@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getProfileImageUrl } from '../utils/image';
 import { dashboardAPI } from '../api/dashboard';
 import { campsAPI } from '../api/camps';
 import DashboardCard from '../components/DashboardCard';
@@ -140,11 +141,7 @@ export default function Dashboard() {
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-slate-200 shadow-inner hover:scale-105 transition-transform">
               {user?.profileImage ? (
                 <img 
-                  src={(() => {
-                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-                    const hostUrl = baseUrl.replace('/api', '');
-                    return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
-                  })()} 
+                  src={getProfileImageUrl(user.profileImage)} 
                   alt="Profile" 
                   className="w-full h-full object-cover"
                 />

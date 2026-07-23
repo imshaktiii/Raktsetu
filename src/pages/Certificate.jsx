@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getProfileImageUrl } from '../utils/image';
 import { certificateAPI } from '../api/certificate';
 import { 
   Loader2, 
@@ -187,11 +188,7 @@ export default function Certificate() {
           <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-300 shadow-inner">
             {donorData.profileImage ? (
               <img 
-                src={(() => {
-                  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-                  const hostUrl = baseUrl.replace('/api', '');
-                  return donorData.profileImage.startsWith('http') ? donorData.profileImage : `${hostUrl}${donorData.profileImage}`;
-                })()} 
+                src={getProfileImageUrl(donorData.profileImage)} 
                 alt="Profile" 
                 className="w-full h-full object-cover"
               />

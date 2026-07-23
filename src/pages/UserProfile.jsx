@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { donorsAPI } from '../api/donors';
+import { getProfileImageUrl } from '../utils/image';
 import { 
   User, 
   Mail, 
@@ -20,14 +21,6 @@ import {
 
 export default function UserProfile() {
   const { user, updateUser } = useAuth();
-
-  const getProfileImageUrl = (imagePath) => {
-    if (!imagePath) return null;
-    if (imagePath.startsWith('http')) return imagePath;
-    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-    const hostUrl = baseUrl.replace('/api', '');
-    return `${hostUrl}${imagePath}`;
-  };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -50,7 +43,7 @@ export default function UserProfile() {
     try {
       const res = await donorsAPI.uploadPhoto(formData);
       if (res.success) {
-        updateUser({ profileImage: res.profileImage });
+        updateUser({ profileImage: res.image || res.profileImage });
         alert("Profile picture updated successfully!");
       } else {
         alert(res.message || "Failed to upload profile picture.");
@@ -81,6 +74,9 @@ export default function UserProfile() {
         const data = await donorsAPI.getProfile();
         if (data && data.success) {
           const donor = data.donor;
+          if (donor && donor.profileImage && donor.profileImage !== user?.profileImage) {
+            updateUser({ profileImage: donor.profileImage });
+          }
           setProfile({
             name: donor.fullName || '',
             email: donor.email || '',
@@ -104,7 +100,7 @@ export default function UserProfile() {
       }
     };
     loadProfile();
-  }, []);
+  }, [user?.profileImage, updateUser]);
 
 
 

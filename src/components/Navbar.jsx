@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { getProfileImageUrl } from '../utils/image';
 import { Menu, X, Phone, Heart, ShieldAlert, Award } from 'lucide-react';
 
 export default function Navbar() {
@@ -128,11 +129,7 @@ export default function Navbar() {
                     <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner group-hover:scale-105 transition-transform">
                       {user?.profileImage ? (
                         <img 
-                          src={(() => {
-                            const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-                            const hostUrl = baseUrl.replace('/api', '');
-                            return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
-                          })()} 
+                          src={getProfileImageUrl(user.profileImage)} 
                           alt="Profile" 
                           className="w-full h-full object-cover"
                         />
@@ -167,11 +164,7 @@ export default function Navbar() {
                   <Link to="/profile" className="w-8 h-8 rounded-full bg-slate-105 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
                     {user?.profileImage ? (
                       <img 
-                        src={(() => {
-                          const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-                          const hostUrl = baseUrl.replace('/api', '');
-                          return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
-                        })()} 
+                        src={getProfileImageUrl(user.profileImage)} 
                         alt="Profile" 
                         className="w-full h-full object-cover"
                       />
