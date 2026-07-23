@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   Heart, Calendar, Search, ShieldCheck, Award, Info, Users, 
   MapPin, CheckCircle2, ChevronDown, MessageSquare, ArrowRight, Activity 
@@ -8,6 +9,18 @@ import {
 export default function Home() {
   const [activeTab, setActiveTab] = useState('age');
   const [faqOpen, setFaqOpen] = useState(null);
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+
+  const handleRegisterClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/register' } });
+    } else {
+      navigate('/register');
+    }
+  };
+
+  const isRegisteredDonor = isAuthenticated && (!user?.role || user.role === 'donor');
 
   const stats = [
     { label: 'Active Registered Donors', count: '45,820+', icon: Users, color: 'text-gov-blue bg-gov-blue/5' },
@@ -152,18 +165,25 @@ export default function Home() {
             <p className="text-lg text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed">
               Welcome to **RaktaSetu**, the unified portal for the Ministry of Health. We link willing blood donors with nearby clinical centers, active camps, and real-time bank reserves.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link
-                to="/register"
-                className="px-8 py-3.5 rounded-xl bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker transition-all shadow-lg shadow-gov-red-dark/20 text-center hover:scale-102"
-              >
-                Register as Donor
-              </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
+              {isRegisteredDonor ? (
+                <div className="inline-flex items-center gap-2 px-4 py-3.5 bg-emerald-50 text-emerald-700 border border-emerald-250 rounded-xl font-bold text-sm shadow-sm select-none">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  You are already a registered donor.
+                </div>
+              ) : (
+                <button
+                  onClick={handleRegisterClick}
+                  className="px-8 py-3.5 rounded-xl bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker transition-all shadow-lg shadow-gov-red-dark/20 text-center hover:scale-102 cursor-pointer"
+                >
+                  Register as Donor
+                </button>
+              )}
               <Link
                 to="/banks"
                 className="px-8 py-3.5 rounded-xl border border-slate-300 bg-white text-slate-800 font-semibold hover:bg-slate-50 transition-all text-center hover:scale-102"
               >
-                Check Stock Status
+                Check Blood Stock Status
               </Link>
             </div>
             {/* Direct Support Notice */}

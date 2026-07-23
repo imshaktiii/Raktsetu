@@ -1,128 +1,87 @@
-import { useState } from 'react';
-import { Search, MapPin, Phone, Building, AlertTriangle, ShieldCheck, Mail, Globe, ArrowUpRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, MapPin, Phone, Building, AlertTriangle, ShieldCheck, Mail, Globe, ArrowUpRight, Loader2 } from 'lucide-react';
+import { bloodStockAPI } from '../api/bloodStock';
 
-const mockBanks = [
-  {
-    id: 1,
-    name: 'AIIMS Central Blood Bank',
-    category: 'Government',
-    address: 'Ansari Nagar, Near Ring Road',
-    district: 'New Delhi',
-    phone: '+91-11-26588500',
-    email: 'bloodbank@aiims.edu',
-    website: 'www.aiims.edu',
-    stock: {
-      'A+': { bags: 24, status: 'Available' },
-      'A-': { bags: 4, status: 'Low' },
-      'B+': { bags: 38, status: 'Available' },
-      'B-': { bags: 2, status: 'Critical' },
-      'AB+': { bags: 15, status: 'Available' },
-      'AB-': { bags: 1, status: 'Critical' },
-      'O+': { bags: 45, status: 'Available' },
-      'O-': { bags: 0, status: 'Unavailable' }
-    }
-  },
-  {
-    id: 2,
-    name: 'Red Cross Society Regional Center',
-    category: 'Red Cross',
-    address: '1, Red Cross Road, Near Parliament House',
-    district: 'Central Delhi',
-    phone: '+91-11-23716441',
-    email: 'info@indianredcross.org',
-    website: 'www.indianredcross.org',
-    stock: {
-      'A+': { bags: 18, status: 'Available' },
-      'A-': { bags: 8, status: 'Available' },
-      'B+': { bags: 22, status: 'Available' },
-      'B-': { bags: 6, status: 'Low' },
-      'AB+': { bags: 9, status: 'Available' },
-      'AB-': { bags: 4, status: 'Low' },
-      'O+': { bags: 28, status: 'Available' },
-      'O-': { bags: 5, status: 'Low' }
-    }
-  },
-  {
-    id: 3,
-    name: 'Safdarjung Hospital Blood Depot',
-    category: 'Government',
-    address: 'Ansari Nagar East, Safdarjung',
-    district: 'New Delhi',
-    phone: '+91-11-26707100',
-    email: 'contact@safdarjunghospital.gov.in',
-    website: 'www.vmmc-sjh.nic.in',
-    stock: {
-      'A+': { bags: 12, status: 'Available' },
-      'A-': { bags: 1, status: 'Critical' },
-      'B+': { bags: 19, status: 'Available' },
-      'B-': { bags: 0, status: 'Unavailable' },
-      'AB+': { bags: 5, status: 'Low' },
-      'AB-': { bags: 0, status: 'Unavailable' },
-      'O+': { bags: 31, status: 'Available' },
-      'O-': { bags: 2, status: 'Critical' }
-    }
-  },
-  {
-    id: 4,
-    name: 'Max Super Speciality Blood Bank',
-    category: 'Private',
-    address: 'Press Enclave Road, Saket',
-    district: 'South Delhi',
-    phone: '+91-11-26515050',
-    email: 'saket@maxhealthcare.com',
-    website: 'www.maxhealthcare.in',
-    stock: {
-      'A+': { bags: 30, status: 'Available' },
-      'A-': { bags: 10, status: 'Available' },
-      'B+': { bags: 35, status: 'Available' },
-      'B-': { bags: 8, status: 'Available' },
-      'AB+': { bags: 18, status: 'Available' },
-      'AB-': { bags: 5, status: 'Low' },
-      'O+': { bags: 40, status: 'Available' },
-      'O-': { bags: 12, status: 'Available' }
-    }
-  },
-  {
-    id: 5,
-    name: 'Civil Hospital Blood Center',
-    category: 'Government',
-    address: 'Near Sadar Bazar, Sector 10',
-    district: 'Gurugram',
-    phone: '+91-124-2322412',
-    email: 'hry-civilgurugram@gov.in',
-    website: 'www.haryanahealth.nic.in',
-    stock: {
-      'A+': { bags: 8, status: 'Low' },
-      'A-': { bags: 0, status: 'Unavailable' },
-      'B+': { bags: 14, status: 'Available' },
-      'B-': { bags: 2, status: 'Critical' },
-      'AB+': { bags: 4, status: 'Low' },
-      'AB-': { bags: 0, status: 'Unavailable' },
-      'O+': { bags: 15, status: 'Available' },
-      'O-': { bags: 1, status: 'Critical' }
-    }
-  }
-];
-
-const bloodGroups = ['All Groups', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 const categories = ['All Categories', 'Government', 'Red Cross', 'Private'];
+const bloodGroupsList = ['All Groups', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
 export default function BloodBanks() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGroup, setSelectedGroup] = useState('All Groups');
-  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredBanks = mockBanks.filter((bank) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedState, setSelectedState] = useState('All States');
+  const [selectedDistrict, setSelectedDistrict] = useState('All Districts');
+  const [selectedCity, setSelectedCity] = useState('All Cities');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [selectedGroup, setSelectedGroup] = useState('All Groups');
+
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        setLoading(true);
+        const res = await bloodStockAPI.getStock();
+        if (res && res.success) {
+          setStocks(res.stocks || []);
+        } else {
+          setError(res.message || 'Failed to fetch blood stock records.');
+        }
+      } catch (err) {
+        console.error('Failed to load blood stock:', err);
+        setError('Error establishing connection with the national database.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStocks();
+  }, []);
+
+  // Reset dependent filters when parent filters change
+  const handleStateChange = (state) => {
+    setSelectedState(state);
+    setSelectedDistrict('All Districts');
+    setSelectedCity('All Cities');
+  };
+
+  const handleDistrictChange = (district) => {
+    setSelectedDistrict(district);
+    setSelectedCity('All Cities');
+  };
+
+  // Derive unique values dynamically from loaded stocks
+  const states = ['All States', ...new Set(stocks.map((s) => s.state).filter(Boolean))];
+  
+  const districts = ['All Districts', ...new Set(
+    stocks
+      .filter((s) => selectedState === 'All States' || s.state === selectedState)
+      .map((s) => s.district)
+      .filter(Boolean)
+  )];
+
+  const cities = ['All Cities', ...new Set(
+    stocks
+      .filter((s) => selectedState === 'All States' || s.state === selectedState)
+      .filter((s) => selectedDistrict === 'All Districts' || s.district === selectedDistrict)
+      .map((s) => s.city)
+      .filter(Boolean)
+  )];
+
+  // Apply filters
+  const filteredBanks = stocks.filter((bank) => {
     const matchesSearch = bank.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           bank.address.toLowerCase().includes(searchQuery.toLowerCase());
     
+    const matchesState = selectedState === 'All States' || bank.state === selectedState;
+    const matchesDistrict = selectedDistrict === 'All Districts' || bank.district === selectedDistrict;
+    const matchesCity = selectedCity === 'All Cities' || bank.city === selectedCity;
     const matchesCategory = selectedCategory === 'All Categories' || bank.category === selectedCategory;
     
     // Group filter: must have > 0 bags for that group if filtered
     const matchesGroup = selectedGroup === 'All Groups' || 
-                         (bank.stock[selectedGroup] && bank.stock[selectedGroup].bags > 0);
+                         (bank.stock && bank.stock[selectedGroup] && bank.stock[selectedGroup].bags > 0);
                          
-    return matchesSearch && matchesCategory && matchesGroup;
+    return matchesSearch && matchesState && matchesDistrict && matchesCity && matchesCategory && matchesGroup;
   });
 
   const getStatusStyle = (status) => {
@@ -146,7 +105,7 @@ export default function BloodBanks() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(220,38,38,0.2),transparent)] pointer-events-none"></div>
         <div className="max-w-4xl mx-auto space-y-4 relative z-10">
           <span className="text-gov-gold-light uppercase text-xs tracking-wider font-bold">Real-time Stock Inventory</span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Blood Bank Directory</h1>
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight">Blood Stock Status</h1>
           <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             Locate blood banks and inspect live available bags categorized by blood type. Contact them directly for transfusion or donations.
           </p>
@@ -159,19 +118,60 @@ export default function BloodBanks() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             
             {/* Search Input */}
-            <div className="md:col-span-6 relative">
+            <div className="md:col-span-4 relative">
               <Search className="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search blood banks by name, district, or keywords..."
+                placeholder="Search blood banks by name..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-gov-blue text-sm"
               />
             </div>
 
+            {/* State Select */}
+            <div className="md:col-span-2">
+              <select
+                value={selectedState}
+                onChange={(e) => handleStateChange(e.target.value)}
+                className="w-full px-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-gov-blue text-sm font-semibold bg-white"
+              >
+                {states.map((st, i) => (
+                  <option key={i} value={st}>{st}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* District Select */}
+            <div className="md:col-span-2">
+              <select
+                value={selectedDistrict}
+                onChange={(e) => handleDistrictChange(e.target.value)}
+                className="w-full px-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-gov-blue text-sm font-semibold bg-white"
+                disabled={selectedState === 'All States'}
+              >
+                {districts.map((ds, i) => (
+                  <option key={i} value={ds}>{ds}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* City Select */}
+            <div className="md:col-span-2">
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="w-full px-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-gov-blue text-sm font-semibold bg-white"
+                disabled={selectedDistrict === 'All Districts'}
+              >
+                {cities.map((ct, i) => (
+                  <option key={i} value={ct}>{ct}</option>
+                ))}
+              </select>
+            </div>
+
             {/* Category Dropdown */}
-            <div className="md:col-span-3">
+            <div className="md:col-span-2">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
@@ -183,52 +183,65 @@ export default function BloodBanks() {
               </select>
             </div>
 
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
             {/* Blood Group Select */}
-            <div className="md:col-span-3">
+            <div className="md:col-span-4">
               <select
                 value={selectedGroup}
                 onChange={(e) => setSelectedGroup(e.target.value)}
                 className="w-full px-3 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-gov-blue text-sm font-bold text-gov-red bg-white"
               >
-                {bloodGroups.map((gp, i) => (
+                {bloodGroupsList.map((gp, i) => (
                   <option key={i} value={gp}>
                     {gp === 'All Groups' ? 'Filter by Blood Type' : `Has Stock: ${gp}`}
                   </option>
                 ))}
               </select>
             </div>
-
-          </div>
-
-          {/* Color Key */}
-          <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-500 pt-1 border-t border-slate-50">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-              Available (&gt;10 bags)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-              Low Stock (3-9 bags)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
-              Critical (&lt;3 bags)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
-              Unavailable (0 bags)
-            </span>
+            
+            {/* Color Key */}
+            <div className="md:col-span-8 flex flex-wrap gap-4 text-xs font-semibold text-slate-500 justify-end">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                Available (Green)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                Low Stock (Yellow)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                Out of Stock / Critical (Red)
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                Unavailable
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Directory Grid */}
       <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pb-20">
-        {filteredBanks.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-20">
+            <Loader2 className="w-10 h-10 text-gov-blue animate-spin mx-auto mb-4" />
+            <p className="text-slate-500 text-sm font-semibold">Connecting to National Blood Stock Directory...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 bg-red-50 border border-red-150 rounded-3xl p-8 max-w-xl mx-auto">
+            <AlertTriangle className="w-10 h-10 text-gov-red mx-auto mb-3" />
+            <p className="text-gov-red font-bold text-sm mb-1">{error}</p>
+            <p className="text-slate-500 text-xs">Please verify your internet connection or try again later.</p>
+          </div>
+        ) : filteredBanks.length > 0 ? (
           <div className="space-y-6">
             {filteredBanks.map((bank) => (
               <div 
-                key={bank.id} 
+                key={bank._id} 
                 className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 hover:shadow-md transition-shadow relative overflow-hidden"
               >
                 
@@ -244,7 +257,7 @@ export default function BloodBanks() {
                     }`}>
                       {bank.category} Portal
                     </span>
-                    <span className="text-xs text-slate-400 font-semibold">{bank.district}</span>
+                    <span className="text-xs text-slate-400 font-semibold">{bank.district}, {bank.state}</span>
                   </div>
 
                   <h3 className="font-extrabold text-slate-900 text-xl leading-snug">{bank.name}</h3>
@@ -264,16 +277,19 @@ export default function BloodBanks() {
                     </p>
                   </div>
 
-                  <div className="pt-2 flex gap-3">
-                    <a
-                      href={`https://${bank.website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-bold text-gov-blue hover:text-gov-red-dark transition-colors"
-                    >
-                      Visit Website
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </a>
+                  <div className="pt-2 flex justify-between items-center text-xs text-slate-400 font-mono">
+                    {bank.website && (
+                      <a
+                        href={`https://${bank.website}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-bold text-gov-blue hover:text-gov-red-dark transition-colors"
+                      >
+                        Visit Website
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    <span>Last Updated: {new Date(bank.updatedAt || bank.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
 
@@ -287,7 +303,8 @@ export default function BloodBanks() {
                     
                     {/* Stock Grid */}
                     <div className="grid grid-cols-4 gap-2.5">
-                      {Object.entries(bank.stock).map(([grp, info]) => {
+                      {bloodGroupsList.filter(g => g !== 'All Groups').map((grp) => {
+                        const info = (bank.stock && bank.stock[grp]) || { bags: 0, status: 'Unavailable' };
                         const isFilteredGroup = selectedGroup === grp;
                         return (
                           <div 
@@ -318,7 +335,7 @@ export default function BloodBanks() {
           </div>
         ) : (
           <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl p-8">
-            <p className="text-slate-400 text-sm font-medium">No blood banks found matching the select parameters.</p>
+            <p className="text-slate-400 text-sm font-medium">No Blood Stock Available</p>
           </div>
         )}
       </section>

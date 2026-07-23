@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { indiaStatesDistricts } from '../data/indiaStatesDistricts';
@@ -22,14 +22,16 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
-  const { register: registerUser, isAuthenticated } = useAuth();
+  const { register: registerUser, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (isAuthenticated) {
+    const isRegisteredDonor = isAuthenticated && (!user?.role || user.role === 'donor');
+    if (isRegisteredDonor) {
       navigate('/dashboard');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const {
     register,
@@ -123,7 +125,7 @@ export default function Register() {
 
       setSuccess(true);
       setTimeout(() => {
-        navigate('/login');
+        navigate('/login', { state: location.state });
       }, 3000);
     } catch (err) {
       setError(err.message || 'Registration failed. Please verify credentials.');
@@ -134,7 +136,7 @@ export default function Register() {
 
   const handleModalClose = () => {
     setSuccess(false);
-    navigate('/login');
+    navigate('/login', { state: location.state });
   };
 
   // Age Validation Function

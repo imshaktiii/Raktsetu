@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -26,12 +26,14 @@ export default function Login() {
 
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      const from = location.state?.from || '/dashboard';
+      navigate(from);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   const {
     register,
@@ -76,7 +78,10 @@ export default function Login() {
       await login({ email: data.email, password: data.password, role });
       setSuccess(true);
       setTimeout(() => {
-        if (role === 'hospital') {
+        const from = location.state?.from;
+        if (from) {
+          navigate(from);
+        } else if (role === 'hospital') {
           navigate('/hospital-dashboard');
         } else if (role === 'bank') {
           navigate('/bank-dashboard');
@@ -369,7 +374,7 @@ export default function Login() {
               {/* Redirect Footer */}
               <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100">
                 Don't have a profile yet?{' '}
-                <Link to="/register" className="text-gov-red font-bold hover:underline">
+                <Link to="/register" state={location.state} className="text-gov-red font-bold hover:underline">
                   Register as Donor
                 </Link>
               </div>

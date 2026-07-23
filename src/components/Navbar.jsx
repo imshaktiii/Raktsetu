@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getProfileImageUrl } from '../utils/image';
 import { Menu, X, Phone, Heart, ShieldAlert, Award } from 'lucide-react';
@@ -8,6 +8,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { isAuthenticated, logout, user } = useAuth();
 
   useEffect(() => {
@@ -22,9 +23,25 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrolled]);
 
+  const getDashboardPath = () => {
+    const role = user?.role?.toLowerCase() || 'donor';
+    if (role === 'hospital') return '/hospital-dashboard';
+    if (role === 'bank') return '/bank-dashboard';
+    if (role === 'admin') return '/admin-dashboard';
+    return '/dashboard';
+  };
+
+  const handleRegisterClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/register' } });
+    } else {
+      navigate('/register');
+    }
+  };
+
   const navLinks = isAuthenticated
     ? [
-        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Dashboard', path: getDashboardPath() },
         { name: 'Search Donors', path: '/search-donor' },
         { name: 'Blood Requests', path: '/blood-requests' },
         { name: 'Blood Camps', path: '/camps' },
@@ -116,12 +133,12 @@ export default function Navbar() {
                   >
                     Login
                   </Link>
-                  <Link
-                    to="/register"
-                    className="px-5 py-2.5 rounded-xl bg-gov-red-dark text-white text-sm font-semibold hover:bg-gov-red-darker transition-all duration-200 shadow-sm shadow-gov-red-dark/20 hover:shadow-md hover:shadow-gov-red-dark/30 transform hover:-translate-y-0.5"
+                  <button
+                    onClick={handleRegisterClick}
+                    className="px-5 py-2.5 rounded-xl bg-gov-red-dark text-white text-sm font-semibold hover:bg-gov-red-darker transition-all duration-200 shadow-sm shadow-gov-red-dark/20 hover:shadow-md hover:shadow-gov-red-dark/30 transform hover:-translate-y-0.5 cursor-pointer"
                   >
                     Register as Donor
-                  </Link>
+                  </button>
                 </>
               ) : (
                 <div className="flex items-center gap-3">
@@ -153,12 +170,12 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center gap-3">
               {!isAuthenticated ? (
-                <Link
-                  to="/register"
-                  className="px-3 py-1.5 rounded-lg bg-gov-red-dark text-white text-xs font-semibold hover:bg-gov-red-darker"
+                <button
+                  onClick={handleRegisterClick}
+                  className="px-3 py-1.5 rounded-lg bg-gov-red-dark text-white text-xs font-semibold hover:bg-gov-red-darker cursor-pointer"
                 >
                   Register
-                </Link>
+                </button>
               ) : (
                 <div className="flex items-center gap-2">
                   <Link to="/profile" className="w-8 h-8 rounded-full bg-slate-105 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
@@ -259,13 +276,15 @@ export default function Navbar() {
                   >
                     Login
                   </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full text-center py-2.5 rounded-lg bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker shadow-sm"
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      handleRegisterClick();
+                    }}
+                    className="w-full text-center py-2.5 rounded-lg bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker shadow-sm cursor-pointer"
                   >
                     Register as Donor
-                  </Link>
+                  </button>
                 </>
               ) : (
                 <button
