@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 900" width="100%" height="100%" style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Card shadows -->
+    <filter id="box-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.05" />
+    </filter>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.08" />
+    </filter>
+    
+    <!-- Background Grid Pattern -->
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#e2e8f0" stroke-width="0.7" />
+    </pattern>
+
+    <!-- Crow's Foot Markers -->
+    <!-- One-to-Many Crow's foot (Many side) -->
+    <marker id="crow-many" viewBox="0 0 20 20" refX="0" refY="10" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 0 2 L 12 10 L 0 18 M 12 0 L 12 20 M 16 0 L 16 20" fill="none" stroke="#475569" stroke-width="2" />
+    </marker>
+    <!-- One side marker (One and only one) -->
+    <marker id="crow-one" viewBox="0 0 20 20" refX="20" refY="10" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 8 0 L 8 20 M 14 0 L 14 20" fill="none" stroke="#475569" stroke-width="2" />
+    </marker>
+  </defs>
+
+  <!-- Apply Background Grid -->
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Diagram Title -->
+  <text x="500" y="40" text-anchor="middle" font-size="24" font-weight="800" fill="#0f172a" letter-spacing="1">RAKTASETU - ENTITY RELATIONSHIP DIAGRAM</text>
+  <text x="500" y="65" text-anchor="middle" font-size="13" font-weight="500" fill="#64748b" letter-spacing="0.5">Database Schema Map | MongoDB Collections &amp; Relationships</text>
+
+  <!-- ==================== ENTITY: USER / DONOR ==================== -->
+  <g id="entity-user" filter="url(#card-shadow)">
+    <rect x="360" y="140" width="280" height="480" rx="12" fill="#ffffff" stroke="#0f52ba" stroke-width="2" />
+    <!-- Header -->
+    <path d="M 360 152 A 12 12 0 0 1 372 140 L 628 140 A 12 12 0 0 1 640 152 L 640 180 L 360 180 Z" fill="#0f52ba" />
+    <text x="500" y="165" text-anchor="middle" font-size="14" font-weight="800" fill="#ffffff">User / Donor</text>
+    
+    <!-- Fields -->
+    <g transform="translate(375, 205)" font-size="11" fill="#334155" line-height="22">
+      <text x="0" y="0" font-weight="800" fill="#b91c1c">PK  _id</text>
+      <text x="0" y="22">    fullName</text>
+      <text x="0" y="44">    email</text>
+      <text x="0" y="66">    password</text>
+      <text x="0" y="88">    phone</text>
+      <text x="0" y="110">    bloodGroup</text>
+      <text x="0" y="132">    age</text>
+      <text x="0" y="154">    gender</text>
+      <text x="0" y="176">    state</text>
+      <text x="0" y="198">    district</text>
+      <text x="0" y="220">    city</text>
+      <text x="0" y="242">    address</text>
+      <text x="0" y="264">    profileImage</text>
+      <text x="0" y="286">    available</text>
+      <text x="0" y="308">    role</text>
+      <text x="0" y="330" fill="#64748b">    createdAt</text>
+    </g>
+
+    <!-- Field Types -->
+    <g transform="translate(560, 205)" font-size="10" fill="#64748b" text-anchor="end">
+      <text x="60" y="0" font-style="italic">ObjectId</text>
+      <text x="60" y="22">String</text>
+      <text x="60" y="44">String</text>
+      <text x="60" y="66">String</text>
+      <text x="60" y="88">String</text>
+      <text x="60" y="110">String</text>
+      <text x="60" y="132">Number</text>
+      <text x="60" y="154">String</text>
+      <text x="60" y="176">String</text>
+      <text x="60" y="198">String</text>
+      <text x="60" y="220">String</text>
+      <text x="60" y="242">String</text>
+      <text x="60" y="264">String</text>
+      <text x="60" y="286">Boolean</text>
+      <text x="60" y="308">String</text>
+      <text x="60" y="330">Date</text>
+    </g>
+  </g>
+
+  <!-- ==================== ENTITY: DONATION HISTORY ==================== -->
+  <g id="entity-donation-history" filter="url(#box-shadow)">
+    <rect x="40" y="120" width="260" height="170" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M 40 130 A 10 10 0 0 1 50 120 L 290 120 A 10 10 0 0 1 300 130 L 300 155 L 40 155 Z" fill="#475569" />
+    <text x="170" y="142" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">DonationHistory</text>
+    
+    <g transform="translate(55, 180)" font-size="11" fill="#334155">
+      <text x="0" y="0" font-weight="800" fill="#b91c1c">PK  _id</text>
+      <text x="0" y="22" font-weight="800" fill="#0f52ba">FK  donorId</text>
+      <text x="0" y="44">    date</text>
+      <text x="0" y="66">    location</text>
+      <text x="0" y="88">    units</text>
+    </g>
+    <g transform="translate(285, 180)" font-size="10" fill="#64748b" text-anchor="end">
+      <text x="0" y="0" font-style="italic">ObjectId</text>
+      <text x="0" y="22" font-style="italic">ObjectId</text>
+      <text x="0" y="44">Date</text>
+      <text x="0" y="66">String</text>
+      <text x="0" y="88">Number</text>
+    </g>
+  </g>
+
+  <!-- ==================== ENTITY: CERTIFICATE ==================== -->
+  <g id="entity-certificate" filter="url(#box-shadow)">
+    <rect x="40" y="460" width="260" height="170" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M 40 470 A 10 10 0 0 1 50 460 L 290 460 A 10 10 0 0 1 300 470 L 300 495 L 40 495 Z" fill="#475569" />
+    <text x="170" y="482" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">Certificate</text>
+    
+    <g transform="translate(55, 520)" font-size="11" fill="#334155">
+      <text x="0" y="0" font-weight="800" fill="#b91c1c">PK  _id</text>
+      <text x="0" y="22" font-weight="800" fill="#0f52ba">FK  donorId</text>
+      <text x="0" y="44">    certificateNumber</text>
+      <text x="0" y="66">    donationDate</text>
+      <text x="0" y="88">    qrCode</text>
+    </g>
+    <g transform="translate(285, 520)" font-size="10" fill="#64748b" text-anchor="end">
+      <text x="0" y="0" font-style="italic">ObjectId</text>
+      <text x="0" y="22" font-style="italic">ObjectId</text>
+      <text x="0" y="44">String</text>
+      <text x="0" y="66">Date</text>
+      <text x="0" y="88">String</text>
+    </g>
+  </g>
+
+  <!-- ==================== ENTITY: BLOOD REQUEST ==================== -->
+  <g id="entity-blood-request" filter="url(#box-shadow)">
+    <rect x="700" y="120" width="260" height="210" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M 700 130 A 10 10 0 0 1 710 120 L 950 120 A 10 10 0 0 1 960 130 L 960 155 L 700 155 Z" fill="#475569" />
+    <text x="830" y="142" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">BloodRequest</text>
+    
+    <g transform="translate(715, 180)" font-size="11" fill="#334155">
+      <text x="0" y="0" font-weight="800" fill="#b91c1c">PK  _id</text>
+      <text x="0" y="22">    requesterName</text>
+      <text x="0" y="44">    bloodGroup</text>
+      <text x="0" y="66">    units</text>
+      <text x="0" y="88">    hospital</text>
+      <text x="0" y="110">    city</text>
+      <text x="0" y="132">    contact</text>
+      <text x="0" y="154">    status</text>
+    </g>
+    <g transform="translate(945, 180)" font-size="10" fill="#64748b" text-anchor="end">
+      <text x="0" y="0" font-style="italic">ObjectId</text>
+      <text x="0" y="22">String</text>
+      <text x="0" y="44">String</text>
+      <text x="0" y="66">Number</text>
+      <text x="0" y="88">String</text>
+      <text x="0" y="110">String</text>
+      <text x="0" y="132">String</text>
+      <text x="0" y="154">String</text>
+    </g>
+  </g>
+
+  <!-- ==================== ENTITY: BLOOD CAMP ==================== -->
+  <g id="entity-blood-camp" filter="url(#box-shadow)">
+    <rect x="700" y="460" width="260" height="210" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M 700 470 A 10 10 0 0 1 710 460 L 950 460 A 10 10 0 0 1 960 470 L 960 495 L 700 495 Z" fill="#475569" />
+    <text x="830" y="482" text-anchor="middle" font-size="12" font-weight="800" fill="#ffffff">BloodCamp</text>
+    
+    <g transform="translate(715, 520)" font-size="11" fill="#334155">
+      <text x="0" y="0" font-weight="800" fill="#b91c1c">PK  _id</text>
+      <text x="0" y="22">    organizer</text>
+      <text x="0" y="44">    venue</text>
+      <text x="0" y="66">    state</text>
+      <text x="0" y="88">    district</text>
+      <text x="0" y="110">    city</text>
+      <text x="0" y="132">    date</text>
+      <text x="0" y="154">    capacity</text>
+    </g>
+    <g transform="translate(945, 520)" font-size="10" fill="#64748b" text-anchor="end">
+      <text x="0" y="0" font-style="italic">ObjectId</text>
+      <text x="0" y="22">String</text>
+      <text x="0" y="44">String</text>
+      <text x="0" y="66">String</text>
+      <text x="0" y="88">String</text>
+      <text x="0" y="110">String</text>
+      <text x="0" y="132">Date</text>
+      <text x="0" y="154">Number</text>
+    </g>
+  </g>
+
+  <!-- ==================== RELATIONSHIP LINES & CROW'S FOOT NOTATION ==================== -->
+  
+  <!-- Relationship: User (One) to DonationHistory (Many) -->
+  <!-- Line starts at User border (360, 200) and ends at DonationHistory border (300, 200) -->
+  <path d="M 360 200 L 300 200" fill="none" stroke="#475569" stroke-width="2" marker-start="url(#crow-one)" marker-end="url(#crow-many)" />
+  <text x="330" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#475569">has</text>
+
+  <!-- Relationship: User (One) to Certificate (Many) -->
+  <!-- Line starts at User border (360, 540) and ends at Certificate border (300, 540) -->
+  <path d="M 360 540 L 300 540" fill="none" stroke="#475569" stroke-width="2" marker-start="url(#crow-one)" marker-end="url(#crow-many)" />
+  <text x="330" y="530" text-anchor="middle" font-size="9" font-weight="700" fill="#475569">earns</text>
+
+  <!-- Relationship: User (One) to BloodRequest (Many) -->
+  <!-- Line starts at User border (640, 200) and ends at BloodRequest border (700, 200) -->
+  <path d="M 640 200 L 700 200" fill="none" stroke="#475569" stroke-width="2" marker-start="url(#crow-one)" marker-end="url(#crow-many)" />
+  <text x="670" y="190" text-anchor="middle" font-size="9" font-weight="700" fill="#475569">creates</text>
+
+</svg>

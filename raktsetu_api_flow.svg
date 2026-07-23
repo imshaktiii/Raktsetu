@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1020" width="100%" height="100%" style="background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <defs>
+    <!-- Shadows -->
+    <filter id="box-shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.04" />
+    </filter>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.06" />
+    </filter>
+    
+    <!-- Background Grid Pattern -->
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#e2e8f0" stroke-width="0.7" />
+    </pattern>
+
+    <!-- Connector Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569" />
+    </marker>
+  </defs>
+
+  <!-- Background Grid -->
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" font-size="24" font-weight="800" fill="#0f172a" letter-spacing="1">RAKTASETU - REST API FLOW DIAGRAM</text>
+  <text x="500" y="65" text-anchor="middle" font-size="13" font-weight="500" fill="#64748b" letter-spacing="0.5">End-to-End Request Processing Pipelines | Frontend to Database</text>
+
+  <!-- Swimlane Headers -->
+  <g transform="translate(0, 95)" font-size="12" font-weight="800" fill="#475569" letter-spacing="0.5">
+    <rect x="50" y="0" width="180" height="30" rx="6" fill="#cbd5e1" opacity="0.3" />
+    <text x="140" y="19" text-anchor="middle">CLIENT (REACT UI)</text>
+
+    <rect x="280" y="0" width="200" height="30" rx="6" fill="#cbd5e1" opacity="0.3" />
+    <text x="380" y="19" text-anchor="middle">HTTP ROUTE LAYER</text>
+
+    <rect x="520" y="0" width="200" height="30" rx="6" fill="#cbd5e1" opacity="0.3" />
+    <text x="620" y="19" text-anchor="middle">PROCESSING / MIDDLEWARE</text>
+
+    <rect x="760" y="0" width="180" height="30" rx="6" fill="#cbd5e1" opacity="0.3" />
+    <text x="850" y="19" text-anchor="middle">DB (MONGODB)</text>
+  </g>
+
+  <!-- ==================== FLOW 1: USER REGISTRATION ==================== -->
+  <g transform="translate(0, 150)" filter="url(#box-shadow)">
+    <!-- Swimlane Background -->
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <!-- Steps -->
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Form Submission</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">User inputs credentials</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">POST /api/auth/register</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">API Router validation</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">2. Hash &amp; Create</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#64748b">Bcrypt Encryption</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Save User</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Document</text>
+    
+    <!-- Return Arrow -->
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (201 Created -> Redirect to Login)</text>
+  </g>
+
+  <!-- ==================== FLOW 2: USER LOGIN ==================== -->
+  <g transform="translate(0, 290)" filter="url(#box-shadow)">
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Send Credentials</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">Email + Password</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">POST /api/auth/login</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">API Router check</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#fef2f2" stroke="#fca5a5" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">2. JWT Generation</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#7f1d1d">Generate Session Token</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Verify User</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Search</text>
+
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (200 OK -> Save Token in LocalStorage -> Redirect to Dashboard)</text>
+  </g>
+
+  <!-- ==================== FLOW 3: SEARCH DONORS ==================== -->
+  <g transform="translate(0, 430)" filter="url(#box-shadow)">
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Filter Criteria</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">State/District selector</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">GET /api/donors/search</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">Query params parsing</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#fef2f2" stroke="#fca5a5" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">2. Validate Session</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#7f1d1d">JWT Middleware Shield</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Search Donors</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Query</text>
+
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (200 OK -> Render Donor cards/details)</text>
+  </g>
+
+  <!-- ==================== FLOW 4: BLOOD REQUEST ==================== -->
+  <g transform="translate(0, 570)" filter="url(#box-shadow)">
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Form Submission</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">Units &amp; Hospital info</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">POST /api/requests</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">API Router verification</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#fef2f2" stroke="#fca5a5" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">2. Auth Validation</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#7f1d1d">JWT Middleware check</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Save Request</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Write</text>
+
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (201 Created -> Refresh Urgent request board)</text>
+  </g>
+
+  <!-- ==================== FLOW 5: CAMP REGISTRATION ==================== -->
+  <g transform="translate(0, 710)" filter="url(#box-shadow)">
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Click Register</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">Select slot capacity</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">POST /api/camps</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">API Router execution</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#fef2f2" stroke="#fca5a5" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">2. Verify Duplicate</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#7f1d1d">Check double registration</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Save Registration</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Write</text>
+
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (201 Created -> Show upcoming camp schedules)</text>
+  </g>
+
+  <!-- ==================== FLOW 6: CERTIFICATE GENERATION ==================== -->
+  <g transform="translate(0, 850)" filter="url(#box-shadow)">
+    <rect x="40" y="0" width="920" height="120" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+    
+    <rect x="60" y="35" width="160" height="50" rx="8" fill="#f8fafc" stroke="#cbd5e1" />
+    <text x="140" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#334155">1. Click Download</text>
+    <text x="140" y="74" text-anchor="middle" font-size="9" fill="#64748b">Generate PDF request</text>
+
+    <path d="M 220 60 L 290 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    
+    <rect x="300" y="35" width="160" height="50" rx="8" fill="#e0f2fe" stroke="#38bdf8" />
+    <text x="380" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">GET /api/certificate/:id</text>
+    <text x="380" y="72" text-anchor="middle" font-size="9" fill="#075985">Param identity check</text>
+
+    <path d="M 460 60 L 530 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="540" y="35" width="160" height="50" rx="8" fill="#fef2f2" stroke="#fca5a5" />
+    <text x="620" y="60" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">2. Build PDF Layout</text>
+    <text x="620" y="74" text-anchor="middle" font-size="9" fill="#7f1d1d">Incorporate QR &amp; Seal</text>
+
+    <path d="M 700 60 L 770 60" fill="none" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <rect x="780" y="35" width="140" height="50" rx="8" fill="#e8f5e9" stroke="#81c784" />
+    <text x="850" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#1b5e20">Query Donor Details</text>
+    <text x="850" y="72" text-anchor="middle" font-size="9" fill="#2e7d32">MongoDB Search</text>
+
+    <path d="M 850 85 L 850 100 L 140 100 L 140 85" fill="none" stroke="#22c55e" stroke-dasharray="3" stroke-width="1.5" marker-end="url(#arrow)" />
+    <text x="500" y="112" text-anchor="middle" font-size="9" font-weight="700" fill="#15803d">Success Response (200 OK -> Deliver PDF payload file to local browser print manager)</text>
+  </g>
+
+</svg>
