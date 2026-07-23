@@ -22,8 +22,9 @@ export default function ProtectedRoute({ children, allowedRoles = [] }) {
   }
 
   // Role validation check (e.g. hospital, bank, admin, donor)
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role?.toLowerCase())) {
-    console.warn(`Access denied. Role "${user?.role}" is unauthorized to view this resource.`);
+  const userRole = user?.role || 'donor';
+  if (allowedRoles.length > 0 && !allowedRoles.includes(userRole.toLowerCase())) {
+    console.warn(`Access denied. Role "${userRole}" is unauthorized to view this resource.`);
     return <Navigate to="/" replace />;
   }
 

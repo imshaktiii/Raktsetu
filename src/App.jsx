@@ -38,7 +38,11 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
-              <Route path="/camps" element={<BloodCamps />} />
+              <Route path="/camps" element={
+                <ProtectedRoute>
+                  <BloodCamps />
+                </ProtectedRoute>
+              } />
               <Route path="/banks" element={<BloodBanks />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -64,9 +68,21 @@ function App() {
                 </ProtectedRoute>
               } />
               <Route path="/search-blood" element={<SearchBlood />} />
-              <Route path="/search-donor" element={<SearchDonor />} />
-              <Route path="/blood-requests" element={<BloodRequests />} />
-              <Route path="/emergency-request" element={<EmergencyRequest />} />
+              <Route path="/search-donor" element={
+                <ProtectedRoute>
+                  <SearchDonor />
+                </ProtectedRoute>
+              } />
+              <Route path="/blood-requests" element={
+                <ProtectedRoute>
+                  <BloodRequests />
+                </ProtectedRoute>
+              } />
+              <Route path="/emergency-request" element={
+                <ProtectedRoute>
+                  <EmergencyRequest />
+                </ProtectedRoute>
+              } />
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <UserProfile />

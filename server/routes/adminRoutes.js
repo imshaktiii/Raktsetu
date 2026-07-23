@@ -7,6 +7,8 @@ const {
   deleteRequest,
   getCamps,
   deleteCamp,
+  getRegistrations,
+  markAsDonated,
 } = require("../controllers/adminController");
 
 // Donors administration
@@ -26,5 +28,11 @@ router.route("/camps")
   .get(getCamps);
 router.route("/camps/:id")
   .delete(deleteCamp);
+
+// Registrations administration
+router.route("/registrations")
+  .get(getRegistrations);
+router.route("/registrations/:id/donate")
+  .put(markAsDonated);
 
 module.exports = router;

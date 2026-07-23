@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
@@ -24,8 +24,14 @@ export default function Login() {
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState(null);
 
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
 
   const {
     register,
@@ -364,7 +370,7 @@ export default function Login() {
               <div className="text-center text-xs text-slate-500 pt-4 border-t border-slate-100">
                 Don't have a profile yet?{' '}
                 <Link to="/register" className="text-gov-red font-bold hover:underline">
-                  Become a Donor
+                  Register as Donor
                 </Link>
               </div>
             </div>

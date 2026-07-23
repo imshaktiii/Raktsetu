@@ -29,5 +29,15 @@ export const adminAPI = {
   deleteCamp: async (id) => {
     const response = await apiClient.delete(`/admin/camps/${id}`);
     return response.data;
+  },
+
+  getRegistrations: async () => {
+    const response = await apiClient.get('/admin/registrations');
+    return response.data;
+  },
+
+  markAsDonated: async (id) => {
+    const response = await apiClient.put(`/admin/registrations/${id}/donate`);
+    return response.data;
   }
 };

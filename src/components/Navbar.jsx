@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { Menu, X, Phone, Heart, ShieldAlert, Award } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,24 +21,23 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrolled]);
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Search Blood', path: '/search-blood' },
-    { name: 'Search Donor', path: '/search-donor' },
-    { name: 'Blood Requests', path: '/blood-requests' },
-    { name: 'Emergency Request', path: '/emergency-request' },
-    { name: 'Profile', path: '/profile' },
-    { name: 'Notifications', path: '/notifications' },
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Certificate', path: '/certificate' },
-    { name: 'Hospital Portal', path: '/hospital-dashboard' },
-    { name: 'Blood Bank Portal', path: '/bank-dashboard' },
-    { name: 'Admin Portal', path: '/admin-dashboard' },
-    { name: 'About', path: '/about' },
-    { name: 'Blood Camps', path: '/camps' },
-    { name: 'Blood Banks', path: '/banks' },
-    { name: 'Contact', path: '/contact' },
-  ];
+  const navLinks = isAuthenticated
+    ? [
+        { name: 'Dashboard', path: '/dashboard' },
+        { name: 'Search Donors', path: '/search-donor' },
+        { name: 'Blood Requests', path: '/blood-requests' },
+        { name: 'Blood Camps', path: '/camps' },
+        { name: 'Donation History', path: '/profile' },
+        { name: 'Certificate', path: '/certificate' },
+        { name: 'Profile', path: '/profile' }
+      ]
+    : [
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about' },
+        { name: 'Contact', path: '/contact' },
+        { name: 'Login', path: '/login' },
+        { name: 'Register', path: '/register' }
+      ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -93,7 +94,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive(link.path)
                       ? 'text-gov-red bg-gov-red/5 font-semibold'
                       : 'text-slate-600 hover:text-gov-blue hover:bg-slate-50'
@@ -106,28 +107,48 @@ export default function Navbar() {
 
             {/* Right CTAs */}
             <div className="hidden md:flex items-center gap-3">
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-gov-blue hover:text-gov-blue-light transition-colors"
-              >
-                Portal Login
-              </Link>
-              <Link
-                to="/register"
-                className="px-5 py-2.5 rounded-xl bg-gov-red-dark text-white text-sm font-semibold hover:bg-gov-red-darker transition-all duration-200 shadow-sm shadow-gov-red-dark/20 hover:shadow-md hover:shadow-gov-red-dark/30 transform hover:-translate-y-0.5"
-              >
-                Become a Donor
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 text-sm font-medium text-gov-blue hover:text-gov-blue-light transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="px-5 py-2.5 rounded-xl bg-gov-red-dark text-white text-sm font-semibold hover:bg-gov-red-darker transition-all duration-200 shadow-sm shadow-gov-red-dark/20 hover:shadow-md hover:shadow-gov-red-dark/30 transform hover:-translate-y-0.5"
+                  >
+                    Register as Donor
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={logout}
+                  className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-all duration-200 cursor-pointer border border-slate-200"
+                >
+                  Logout
+                </button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center gap-3">
-              <Link
-                to="/register"
-                className="px-3 py-1.5 rounded-lg bg-gov-red-dark text-white text-xs font-semibold hover:bg-gov-red-darker"
-              >
-                Register
-              </Link>
+              {!isAuthenticated ? (
+                <Link
+                  to="/register"
+                  className="px-3 py-1.5 rounded-lg bg-gov-red-dark text-white text-xs font-semibold hover:bg-gov-red-darker"
+                >
+                  Register
+                </Link>
+              ) : (
+                <button
+                  onClick={logout}
+                  className="px-3 py-1.5 rounded-lg bg-slate-150 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 cursor-pointer"
+                >
+                  Logout
+                </button>
+              )}
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none"
@@ -180,25 +201,50 @@ export default function Navbar() {
                     {link.name}
                   </Link>
                 ))}
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      logout();
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-base font-medium text-slate-600 hover:text-gov-red hover:bg-red-50/50"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Bottom Actions */}
             <div className="border-t border-slate-100 pt-6 flex flex-col gap-3">
-              <Link
-                to="/login"
-                onClick={() => setIsOpen(false)}
-                className="w-full text-center py-2.5 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50"
-              >
-                Portal Login
-              </Link>
-              <Link
-                to="/register"
-                onClick={() => setIsOpen(false)}
-                className="w-full text-center py-2.5 rounded-lg bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker shadow-sm"
-              >
-                Become a Donor
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full text-center py-2.5 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full text-center py-2.5 rounded-lg bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker shadow-sm"
+                  >
+                    Register as Donor
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    logout();
+                  }}
+                  className="w-full text-center py-2.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-medium hover:bg-slate-200 cursor-pointer"
+                >
+                  Logout Session
+                </button>
+              )}
               <div className="mt-4 p-3 bg-slate-50 rounded-lg flex items-center gap-3">
                 <ShieldAlert className="w-5 h-5 text-gov-blue shrink-0" />
                 <div className="text-[11px] text-slate-500">

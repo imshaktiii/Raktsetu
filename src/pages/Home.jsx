@@ -157,7 +157,7 @@ export default function Home() {
                 to="/register"
                 className="px-8 py-3.5 rounded-xl bg-gov-red-dark text-white font-semibold hover:bg-gov-red-darker transition-all shadow-lg shadow-gov-red-dark/20 text-center hover:scale-102"
               >
-                Become a Donor
+                Register as Donor
               </Link>
               <Link
                 to="/banks"

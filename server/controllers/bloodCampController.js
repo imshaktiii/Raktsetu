@@ -1,4 +1,5 @@
 const BloodCamp = require("../models/BloodCamp");
+const CampRegistration = require("../models/CampRegistration");
 
 // @desc    Create a new blood camp
 // @route   POST /api/camps
@@ -132,12 +133,28 @@ const registerForCamp = async (req, res) => {
       });
     }
 
+    // Check if donor is already registered for this camp
+    const existing = await CampRegistration.findOne({ donorId: req.user._id, campId: req.params.id });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "You are already registered for this Blood Camp."
+      });
+    }
+
     if (camp.registeredDonors >= camp.totalSeats) {
       return res.status(400).json({
         success: false,
         message: "Registration failed. Camp seats are full.",
       });
     }
+
+    await CampRegistration.create({
+      donorId: req.user._id,
+      campId: req.params.id,
+      registrationDate: new Date(),
+      status: "Registered"
+    });
 
     camp.registeredDonors += 1;
     await camp.save();

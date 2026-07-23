@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { dashboardAPI } from '../api/dashboard';
+import { campsAPI } from '../api/camps';
 import DashboardCard from '../components/DashboardCard';
 import { 
   ResponsiveContainer, 
@@ -20,6 +21,46 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
+
+  const [showCampsModal, setShowCampsModal] = useState(false);
+  const [campsList, setCampsList] = useState([]);
+  const [registeringCampId, setRegisteringCampId] = useState(null);
+
+  useEffect(() => {
+    if (showCampsModal) {
+      const loadCamps = async () => {
+        try {
+          const res = await campsAPI.getCamps();
+          if (res.success) {
+            setCampsList(res.camps || []);
+          }
+        } catch (err) {
+          console.error("Error loading camps:", err);
+        }
+      };
+      loadCamps();
+    }
+  }, [showCampsModal]);
+
+  const handleRegisterCamp = async (campId) => {
+    setRegisteringCampId(campId);
+    try {
+      const res = await campsAPI.registerForCamp(campId);
+      if (res.success) {
+        alert("Registration Successful! You have registered for this Blood Camp.");
+        setShowCampsModal(false);
+        fetchStats();
+      } else {
+        alert(res.message || "Registration failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      const errMsg = err.response?.data?.message || "You are already registered for this Blood Camp.";
+      alert(errMsg);
+    } finally {
+      setRegisteringCampId(null);
+    }
+  };
 
   const fetchStats = async () => {
     setLoading(true);
@@ -110,6 +151,76 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      {/* Donor Workspace Panel */}
+      {stats?.donorStats && (
+        <section className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card A: Donation Eligibility Status */}
+          <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Donation Eligibility</span>
+              <h3 className="text-lg font-black text-slate-800 mt-1">Status Panel</h3>
+            </div>
+            <div className="py-2">
+              {stats.donorStats.eligible ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-605 border border-emerald-105 rounded-xl font-bold text-xs text-emerald-600">
+                  <span className="w-2.5 h-2.5 bg-emerald-550 rounded-full animate-pulse"></span>
+                  Donation Status: Eligible
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-100 rounded-xl font-bold text-xs">
+                    Next Eligible: {new Date(stats.donorStats.nextEligibleDate).toLocaleDateString()}
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Please wait {stats.donorStats.daysRemaining} more days before your next donation.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Card B: Donate Blood Call-to-Action */}
+          <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Schedule Appt</span>
+              <h3 className="text-lg font-black text-slate-800 mt-1 font-extrabold text-gov-red">Donate Blood</h3>
+            </div>
+            <div>
+              <button 
+                onClick={() => setShowCampsModal(true)}
+                className="w-full py-2.5 bg-gov-red hover:bg-gov-red-dark text-white rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <Calendar className="w-4 h-4" />
+                Find Nearby Blood Camps
+              </button>
+            </div>
+          </div>
+
+          {/* Card C: Upcoming Donation */}
+          <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm flex flex-col justify-between space-y-4">
+            <div>
+              <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Scheduled Visit</span>
+              <h3 className="text-lg font-black text-slate-800 mt-1">Upcoming Donation</h3>
+            </div>
+            <div>
+              {stats.donorStats.upcomingDonation ? (
+                <div className="space-y-1.5 text-xs text-slate-600">
+                  <p className="font-bold text-slate-850">{stats.donorStats.upcomingDonation.campName}</p>
+                  <p className="text-[10px] text-slate-450">Date: {new Date(stats.donorStats.upcomingDonation.date).toLocaleDateString()}</p>
+                  <p className="text-[10px] text-slate-450">Time: {stats.donorStats.upcomingDonation.startTime} - {stats.donorStats.upcomingDonation.endTime}</p>
+                  <p className="text-[10px] text-slate-500 truncate">Location: {stats.donorStats.upcomingDonation.venue}</p>
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-bold uppercase tracking-wider border border-blue-100">
+                    Status: {stats.donorStats.upcomingDonation.status}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 italic">No upcoming donation scheduled.</p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Stats Cards Section */}
       <section className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -250,6 +361,81 @@ export default function Dashboard() {
           </div>
         </div>
       </section>
+
+      {/* Camps List Modal Overlay */}
+      {showCampsModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl flex flex-col border border-slate-100 animate-scale-up">
+            {/* Header */}
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-gov-red" />
+                  Scheduled Donation Camps
+                </h3>
+                <p className="text-[11px] text-slate-400 mt-0.5">Select a camp below to register your voluntary donation profile</p>
+              </div>
+              <button 
+                onClick={() => setShowCampsModal(false)}
+                className="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Content Scrollable List */}
+            <div className="p-6 overflow-y-auto space-y-4 flex-grow bg-slate-50/50">
+              {campsList.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {campsList.map((camp) => (
+                    <div key={camp._id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-md transition-shadow">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-extrabold text-sm text-slate-850 leading-snug">{camp.campName}</h4>
+                          <span className="text-[9px] font-bold text-gov-blue bg-gov-blue/5 px-2 py-0.5 rounded border border-gov-blue/10 shrink-0">
+                            {camp.registeredDonors} / {camp.totalSeats} registered
+                          </span>
+                        </div>
+                        <div className="text-[11px] space-y-1 text-slate-500">
+                          <p><span className="font-bold text-slate-700">Organizer:</span> {camp.organizerName} ({camp.organizerPhone})</p>
+                          <p><span className="font-bold text-slate-700">Date:</span> {new Date(camp.date).toLocaleDateString()}</p>
+                          <p><span className="font-bold text-slate-700">Time:</span> {camp.startTime} - {camp.endTime}</p>
+                          <p><span className="font-bold text-slate-700">Address:</span> {camp.venue}, {camp.city}, {camp.state}</p>
+                          <p><span className="font-bold text-slate-700">Blood Groups:</span> All Groups Welcome (A+, A-, B+, B-, AB+, AB-, O+, O-)</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-2 pt-2">
+                        <a 
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(camp.venue + ', ' + camp.city)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 py-2 text-center border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-bold transition-all"
+                        >
+                          Google Maps
+                        </a>
+                        <button
+                          onClick={() => handleRegisterCamp(camp._id)}
+                          disabled={registeringCampId !== null || camp.registeredDonors >= camp.totalSeats}
+                          className={`flex-1 py-2 rounded-xl text-xs font-bold text-white transition-all cursor-pointer ${
+                            camp.registeredDonors >= camp.totalSeats
+                              ? 'bg-slate-400 cursor-not-allowed'
+                              : 'bg-gov-red hover:bg-gov-red-dark'
+                          }`}
+                        >
+                          {registeringCampId === camp._id ? 'Registering...' : camp.registeredDonors >= camp.totalSeats ? 'Full' : 'Register'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 text-slate-400">No scheduled blood camps found.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

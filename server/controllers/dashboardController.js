@@ -1,6 +1,8 @@
 const Donor = require("../models/Donor");
 const BloodRequest = require("../models/BloodRequest");
 const BloodCamp = require("../models/BloodCamp");
+const CampRegistration = require("../models/CampRegistration");
+const jwt = require("jsonwebtoken");
 
 // @desc    Get dashboard statistics
 // @route   GET /api/dashboard/stats
@@ -73,6 +75,66 @@ const getDashboardStats = async (req, res) => {
       .sort({ date: 1 })
       .limit(5);
 
+    // Check if user is logged in to return donor-specific data
+    let donorStats = null;
+    const tokenHeader = req.header("Authorization");
+    if (tokenHeader) {
+      try {
+        const token = tokenHeader.replace("Bearer ", "");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const donor = await Donor.findById(decoded.id);
+        if (donor) {
+          // 1. Find upcoming donation
+          const upcomingReg = await CampRegistration.findOne({
+            donorId: donor._id,
+            status: "Registered"
+          }).populate("campId");
+
+          let upcomingDonation = null;
+          if (upcomingReg && upcomingReg.campId) {
+            upcomingDonation = {
+              campName: upcomingReg.campId.campName,
+              venue: upcomingReg.campId.venue,
+              city: upcomingReg.campId.city,
+              date: upcomingReg.campId.date,
+              startTime: upcomingReg.campId.startTime,
+              endTime: upcomingReg.campId.endTime,
+              status: upcomingReg.status
+            };
+          }
+
+          // 2. Calculate eligibility
+          let eligible = true;
+          let nextEligibleDate = null;
+          let daysRemaining = 0;
+
+          if (donor.lastDonationDate) {
+            const lastDonation = new Date(donor.lastDonationDate);
+            const today = new Date();
+            const diffTime = today - lastDonation;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 90) {
+              eligible = false;
+              const nextDate = new Date(lastDonation);
+              nextDate.setDate(lastDonation.getDate() + 90);
+              nextEligibleDate = nextDate.toISOString();
+              daysRemaining = 90 - diffDays;
+            }
+          }
+
+          donorStats = {
+            eligible,
+            nextEligibleDate,
+            daysRemaining,
+            upcomingDonation
+          };
+        }
+      } catch (err) {
+        console.error("Optional JWT decode failed:", err.message);
+      }
+    }
+
     res.status(200).json({
       success: true,
       stats: {
@@ -86,6 +148,7 @@ const getDashboardStats = async (req, res) => {
         monthlyRegistrations,
         recentBloodRequests,
         upcomingCamps,
+        donorStats,
       },
     });
   } catch (error) {

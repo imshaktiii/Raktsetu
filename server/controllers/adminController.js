@@ -1,6 +1,7 @@
 const Donor = require("../models/Donor");
 const BloodRequest = require("../models/BloodRequest");
 const BloodCamp = require("../models/BloodCamp");
+const CampRegistration = require("../models/CampRegistration");
 
 // @desc    Get all donors
 // @route   GET /api/admin/donors
@@ -146,6 +147,64 @@ const deleteCamp = async (req, res) => {
   }
 };
 
+const getRegistrations = async (req, res) => {
+  try {
+    const registrations = await CampRegistration.find()
+      .populate("donorId", "fullName email phone bloodGroup")
+      .populate("campId", "campName venue city date")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: registrations.length,
+      registrations,
+    });
+  } catch (error) {
+    console.error("Error fetching camp registrations:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error: Could not load registrations",
+      error: error.message,
+    });
+  }
+};
+
+const markAsDonated = async (req, res) => {
+  try {
+    const registration = await CampRegistration.findById(req.params.id);
+    if (!registration) {
+      return res.status(404).json({
+        success: false,
+        message: "Registration not found",
+      });
+    }
+
+    registration.status = "Donated";
+    await registration.save();
+
+    // Update last donation date and availability on donor
+    const donor = await Donor.findById(registration.donorId);
+    if (donor) {
+      donor.lastDonationDate = new Date();
+      donor.available = false; // Disable donation
+      await donor.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Donor marked as Donated successfully. Profile updated.",
+      registration,
+    });
+  } catch (error) {
+    console.error("Error marking donor as Donated:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error: Could not mark donor as Donated",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getDonors,
   deleteDonor,
@@ -153,4 +212,6 @@ module.exports = {
   deleteRequest,
   getCamps,
   deleteCamp,
+  getRegistrations,
+  markAsDonated,
 };

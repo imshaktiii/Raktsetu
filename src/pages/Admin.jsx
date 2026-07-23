@@ -25,6 +25,7 @@ export default function Admin() {
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
   const [camps, setCamps] = useState([]);
+  const [registrations, setRegistrations] = useState([]);
   const [stats, setStats] = useState(null);
 
   // Loading & Error States
@@ -47,12 +48,14 @@ export default function Admin() {
       const donorsRes = await adminAPI.getDonors();
       const requestsRes = await adminAPI.getRequests();
       const campsRes = await adminAPI.getCamps();
+      const registrationsRes = await adminAPI.getRegistrations();
 
-      if (statsRes.success && donorsRes.success && requestsRes.success && campsRes.success) {
+      if (statsRes.success && donorsRes.success && requestsRes.success && campsRes.success && registrationsRes.success) {
         setStats(statsRes.stats);
         setDonors(donorsRes.donors || []);
         setRequests(requestsRes.requests || []);
         setCamps(campsRes.camps || []);
+        setRegistrations(registrationsRes.registrations || []);
       } else {
         setError('Error loading administrative directory logs.');
       }
@@ -125,6 +128,22 @@ export default function Admin() {
     }
   };
 
+  const handleMarkAsDonated = async (id) => {
+    if (!window.confirm('Are you sure you want to mark this donor as having donated blood at this camp?')) return;
+    try {
+      const res = await adminAPI.markAsDonated(id);
+      if (res.success) {
+        alert('Donor marked as Donated! Donation records updated.');
+        fetchData(); // Reload all data
+      } else {
+        alert(res.message || 'Could not update registration status.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error occurred while updating registration.');
+    }
+  };
+
   // FILTERING LOGIC
   const getFilteredData = () => {
     switch (activeTab) {
@@ -148,6 +167,15 @@ export default function Admin() {
         return camps.filter(c => {
           const matchesSearch = c.campName.toLowerCase().includes(searchQuery.toLowerCase()) || c.venue.toLowerCase().includes(searchQuery.toLowerCase()) || c.city.toLowerCase().includes(searchQuery.toLowerCase());
           const matchesStatus = filterExtra === 'All' || c.status === filterExtra;
+          return matchesSearch && matchesStatus;
+        });
+
+      case 'Camp Registrations':
+        return registrations.filter(r => {
+          const donorName = r.donorId?.fullName || '';
+          const campName = r.campId?.campName || '';
+          const matchesSearch = donorName.toLowerCase().includes(searchQuery.toLowerCase()) || campName.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesStatus = filterExtra === 'All' || r.status === filterExtra;
           return matchesSearch && matchesStatus;
         });
 
@@ -210,7 +238,8 @@ export default function Admin() {
             { name: 'Dashboard', icon: LayoutDashboard },
             { name: 'Donors', icon: Users },
             { name: 'Blood Requests', icon: Heart },
-            { name: 'Blood Camps', icon: Calendar }
+            { name: 'Blood Camps', icon: Calendar },
+            { name: 'Camp Registrations', icon: CheckCircle2 }
           ].map(tab => {
             const Icon = tab.icon;
             return (
@@ -347,6 +376,12 @@ export default function Admin() {
                         <option value="Completed">Completed</option>
                       </>
                     )}
+                    {activeTab === 'Camp Registrations' && (
+                      <>
+                        <option value="Registered">Registered</option>
+                        <option value="Donated">Donated</option>
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
@@ -470,6 +505,61 @@ export default function Admin() {
                           <button onClick={() => handleDeleteCamp(camp._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer">
                             <Trash2 className="w-4.5 h-4.5" />
                           </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+
+              {/* TABLE: CAMP REGISTRATIONS */}
+              {activeTab === 'Camp Registrations' && (
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 uppercase tracking-wider font-bold">
+                      <th className="py-3 px-4">Donor Details</th>
+                      <th className="py-3 px-4 text-center">Blood Group</th>
+                      <th className="py-3 px-4">Camp / Venue</th>
+                      <th className="py-3 px-4">Registered Date</th>
+                      <th className="py-3 px-4 text-center">Status</th>
+                      <th className="py-3 px-4 text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-slate-700 font-medium">
+                    {currentItems.map((reg) => (
+                      <tr key={reg._id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-slate-800">
+                          <p>{reg.donorId?.fullName || 'Unknown Donor'}</p>
+                          <p className="text-[10px] text-slate-400 mt-0.5 font-normal">{reg.donorId?.email} • {reg.donorId?.phone}</p>
+                        </td>
+                        <td className="py-3.5 px-4 text-center font-black text-gov-red">{reg.donorId?.bloodGroup}</td>
+                        <td className="py-3.5 px-4">
+                          <p className="font-semibold text-slate-700">{reg.campId?.campName || 'Deleted Camp'}</p>
+                          <p className="text-[10px] text-slate-450 mt-0.5">{reg.campId?.venue}, {reg.campId?.city}</p>
+                        </td>
+                        <td className="py-3.5 px-4 whitespace-nowrap font-mono">
+                          {new Date(reg.registrationDate || reg.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <span className={`px-2 py-0.5 rounded font-bold text-[9px] uppercase tracking-wider border ${
+                            reg.status === 'Donated' 
+                              ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
+                              : 'bg-amber-50 text-amber-600 border-amber-100'
+                          }`}>
+                            {reg.status}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          {reg.status === 'Registered' ? (
+                            <button 
+                              onClick={() => handleMarkAsDonated(reg._id)}
+                              className="px-2.5 py-1 bg-gov-blue hover:bg-gov-blue-dark text-white rounded-xl font-bold text-[9px] cursor-pointer transition-all"
+                            >
+                              Blood Donated
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-slate-400">Completed</span>
+                          )}
                         </td>
                       </tr>
                     ))}

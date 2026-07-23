@@ -20,6 +20,7 @@ import {
 
 export default function UserProfile() {
   const { user } = useAuth();
+  const [donations, setDonations] = useState([]);
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -28,7 +29,7 @@ export default function UserProfile() {
     gender: 'Male',
     bloodGroup: 'O+',
     weight: 72,
-    lastDonation: '2026-04-15',
+    lastDonation: 'None',
     conditions: 'None',
     address: 'Flat 402, Block C, Pragati Vihar, New Delhi - 110003'
   });
@@ -47,10 +48,15 @@ export default function UserProfile() {
             gender: donor.gender || 'Male',
             bloodGroup: donor.bloodGroup || 'O+',
             weight: donor.weight || 72,
-            lastDonation: donor.lastDonationDate ? new Date(donor.lastDonationDate).toISOString().split('T')[0] : '2026-04-15',
+            lastDonation: donor.lastDonationDate ? new Date(donor.lastDonationDate).toLocaleDateString() : 'None',
             conditions: donor.conditions || 'None',
             address: donor.address || 'Flat 402, Block C, Pragati Vihar, New Delhi - 110003'
           });
+        }
+
+        const historyData = await donorsAPI.getDonationHistory();
+        if (historyData && historyData.success) {
+          setDonations(historyData.history || []);
         }
       } catch (err) {
         console.error('Failed to load profile details:', err);
@@ -59,12 +65,7 @@ export default function UserProfile() {
     loadProfile();
   }, []);
 
-  // Donation History Mock Logs
-  const donations = [
-    { id: 'DN-201', date: '2026-04-15', venue: 'Mega Civil Lines Drive', units: 1, type: 'Whole Blood' },
-    { id: 'DN-185', date: '2026-01-10', venue: 'DLF Cybercity Phase 3', units: 1, type: 'Whole Blood' },
-    { id: 'DN-142', date: '2025-10-05', venue: 'In-house Central Delhi Bank', units: 1, type: 'Whole Blood' }
-  ];
+
 
   // Achievements Gamification Badges
   const achievements = [
@@ -331,18 +332,22 @@ export default function UserProfile() {
             </div>
 
             <div className="space-y-3">
-              {donations.map((dn) => (
-                <div key={dn.id} className="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center gap-4 text-xs">
-                  <div>
-                    <h4 className="font-bold text-slate-800">{dn.venue}</h4>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Donation ID: {dn.id} • Type: {dn.type}</p>
+              {donations.length > 0 ? (
+                donations.map((dn) => (
+                  <div key={dn.id} className="p-4 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center gap-4 text-xs">
+                    <div>
+                      <h4 className="font-bold text-slate-800">{dn.venue}</h4>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Camp: {dn.campName} • Type: {dn.type}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-mono font-bold block">{dn.date}</span>
+                      <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-wider mt-0.5 block">Donated Successful</span>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-mono font-bold block">{dn.date}</span>
-                    <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-wider mt-0.5 block">Dispatched Successful</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <div className="text-center py-8 text-slate-400 text-xs font-medium">No voluntary donations completed yet.</div>
+              )}
             </div>
           </div>
 
@@ -357,17 +362,21 @@ export default function UserProfile() {
               </div>
 
               <div className="space-y-2.5">
-                {donations.map((dn, idx) => (
-                  <div key={idx} className="p-3 rounded-xl border border-slate-50 bg-slate-50/50 text-xs flex justify-between items-center hover:bg-slate-50 transition-colors">
-                    <span className="font-semibold text-slate-650 truncate max-w-[140px]">Certificate for {dn.id}</span>
-                    <Link 
-                      to={`/certificate/${user?.id || user?._id || 'D-MOCK-9988'}`}
-                      className="px-2 py-1 bg-gov-blue hover:bg-gov-blue-dark text-white rounded font-bold text-[9px] cursor-pointer flex items-center gap-0.5"
-                    >
-                      PDF
-                    </Link>
-                  </div>
-                ))}
+                {donations.length > 0 ? (
+                  donations.map((dn, idx) => (
+                    <div key={idx} className="p-3 rounded-xl border border-slate-50 bg-slate-50/50 text-xs flex justify-between items-center hover:bg-slate-50 transition-colors">
+                      <span className="font-semibold text-slate-650 truncate max-w-[140px]">Certificate for {dn.date}</span>
+                      <Link 
+                        to={`/certificate/${user?.id || user?._id}`}
+                        className="px-2 py-1 bg-gov-blue hover:bg-gov-blue-dark text-white rounded font-bold text-[9px] cursor-pointer flex items-center gap-0.5"
+                      >
+                        PDF
+                      </Link>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-slate-400 text-xs font-medium">No certificates generated yet.</div>
+                )}
               </div>
             </div>
 
