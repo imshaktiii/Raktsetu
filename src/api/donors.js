@@ -29,5 +29,14 @@ export const donorsAPI = {
       },
     });
     return response.data;
+  },
+
+  uploadPhoto: async (formData) => {
+    const response = await apiClient.post('/donors/upload-photo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
   }
 };

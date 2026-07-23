@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { dashboardAPI } from '../api/dashboard';
 import { campsAPI } from '../api/camps';
 import DashboardCard from '../components/DashboardCard';
@@ -15,9 +16,10 @@ import {
   LineChart, 
   Line
 } from 'recharts';
-import { Loader2, AlertTriangle, Calendar, MapPin, Award } from 'lucide-react';
+import { Loader2, AlertTriangle, Calendar, MapPin, Award, User } from 'lucide-react';
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
@@ -132,14 +134,36 @@ export default function Dashboard() {
     <div className="w-full min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Page Title Header */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="space-y-2">
-          <span className="inline-block text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-gov-blue/10 text-gov-blue rounded-md border border-gov-blue/5">
-            E-Raktkosh Unified National Dashboard
-          </span>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">National Hub Statistics</h1>
-          <p className="text-xs text-slate-500 max-w-xl">
-            Real-time MERN aggregation of registered voluntary donors, active emergency requests, and scheduled blood camps.
-          </p>
+        <div className="flex items-center gap-4">
+          {/* Profile Photo Display */}
+          <Link to="/profile" className="shrink-0 block">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border-2 border-slate-200 shadow-inner hover:scale-105 transition-transform">
+              {user?.profileImage ? (
+                <img 
+                  src={(() => {
+                    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                    const hostUrl = baseUrl.replace('/api', '');
+                    return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
+                  })()} 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="w-8 h-8 text-slate-400" />
+              )}
+            </div>
+          </Link>
+          <div className="space-y-1">
+            <span className="inline-block text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-gov-blue/10 text-gov-blue rounded-md border border-gov-blue/5">
+              E-Raktkosh Unified National Dashboard
+            </span>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              Welcome, {user?.fullName || 'Donor'}
+            </h1>
+            <p className="text-xs text-slate-500 max-w-xl">
+              Real-time MERN aggregation of registered voluntary donors, active emergency requests, and scheduled blood camps.
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <Link

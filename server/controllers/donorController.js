@@ -55,7 +55,45 @@ const getDonationHistory = async (req, res) => {
   }
 };
 
+const uploadPhoto = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No file uploaded or file rejected by validation rules."
+      });
+    }
+
+    const relativePath = `/uploads/profile/${req.file.filename}`;
+
+    const donor = await Donor.findById(req.user._id);
+    if (!donor) {
+      return res.status(404).json({
+        success: false,
+        message: "Donor profile not found"
+      });
+    }
+
+    donor.profileImage = relativePath;
+    await donor.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image uploaded successfully",
+      profileImage: relativePath
+    });
+  } catch (error) {
+    console.error("Error uploading photo:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error: Could not process file upload",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   searchDonors,
   getDonationHistory,
+  uploadPhoto,
 };

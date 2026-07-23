@@ -180,9 +180,28 @@ export default function Certificate() {
         </div>
 
         {/* Recipient Details & Citation */}
-        <div className="text-center max-w-2xl mx-auto space-y-6 relative z-10 text-xs font-serif leading-relaxed text-slate-650">
+        <div className="text-center max-w-2xl mx-auto space-y-4 relative z-10 text-xs font-serif leading-relaxed text-slate-650 flex flex-col items-center">
           <p className="italic">This certificate is proudly presented to</p>
           
+          {/* Profile Photo Display */}
+          <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-300 shadow-inner">
+            {donorData.profileImage ? (
+              <img 
+                src={(() => {
+                  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                  const hostUrl = baseUrl.replace('/api', '');
+                  return donorData.profileImage.startsWith('http') ? donorData.profileImage : `${hostUrl}${donorData.profileImage}`;
+                })()} 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <svg viewBox="0 0 24 24" className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            )}
+          </div>
+
           <div className="space-y-1">
             <h2 className="text-2xl font-black text-slate-900 tracking-wide font-sans underline decoration-gov-gold decoration-2 underline-offset-8">
               {donorData.fullName}

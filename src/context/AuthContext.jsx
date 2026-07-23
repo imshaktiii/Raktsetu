@@ -72,6 +72,12 @@ export function AuthProvider({ children }) {
     setError(null);
   };
 
+  const updateUser = (updatedFields) => {
+    const updatedUser = { ...user, ...updatedFields };
+    localStorage.setItem('raktsetu_user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   const value = {
     user,
     token,
@@ -80,6 +86,7 @@ export function AuthProvider({ children }) {
     login,
     register: registerUser,
     logout,
+    updateUser,
     isAuthenticated: !!token
   };
 

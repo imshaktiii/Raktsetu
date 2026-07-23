@@ -7,7 +7,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,12 +123,33 @@ export default function Navbar() {
                   </Link>
                 </>
               ) : (
-                <button
-                  onClick={logout}
-                  className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-all duration-200 cursor-pointer border border-slate-200"
-                >
-                  Logout
-                </button>
+                <div className="flex items-center gap-3">
+                  <Link to="/profile" className="flex items-center gap-2 group">
+                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner group-hover:scale-105 transition-transform">
+                      {user?.profileImage ? (
+                        <img 
+                          src={(() => {
+                            const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                            const hostUrl = baseUrl.replace('/api', '');
+                            return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
+                          })()} 
+                          alt="Profile" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs font-bold text-slate-500 uppercase">
+                          {user?.fullName?.charAt(0) || 'D'}
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-sm font-semibold transition-all duration-200 cursor-pointer border border-slate-200"
+                  >
+                    Logout
+                  </button>
+                </div>
               )}
             </div>
 
@@ -142,12 +163,31 @@ export default function Navbar() {
                   Register
                 </Link>
               ) : (
-                <button
-                  onClick={logout}
-                  className="px-3 py-1.5 rounded-lg bg-slate-150 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 cursor-pointer"
-                >
-                  Logout
-                </button>
+                <div className="flex items-center gap-2">
+                  <Link to="/profile" className="w-8 h-8 rounded-full bg-slate-105 flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
+                    {user?.profileImage ? (
+                      <img 
+                        src={(() => {
+                          const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+                          const hostUrl = baseUrl.replace('/api', '');
+                          return user.profileImage.startsWith('http') ? user.profileImage : `${hostUrl}${user.profileImage}`;
+                        })()} 
+                        alt="Profile" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[10px] font-bold text-slate-500 uppercase">
+                        {user?.fullName?.charAt(0) || 'D'}
+                      </span>
+                    )}
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="px-3 py-1.5 rounded-lg bg-slate-150 hover:bg-slate-200 text-slate-755 text-xs font-bold border border-slate-200 cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
               )}
               <button
                 onClick={() => setIsOpen(!isOpen)}

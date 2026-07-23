@@ -26,6 +26,7 @@ const getCertificateDetails = async (req, res) => {
         lastDonationDate: donor.lastDonationDate || new Date(),
         city: donor.city,
         state: donor.state,
+        profileImage: donor.profileImage || "",
         certificateNumber,
       },
     });

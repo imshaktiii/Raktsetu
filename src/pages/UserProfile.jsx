@@ -19,7 +19,48 @@ import {
 } from 'lucide-react';
 
 export default function UserProfile() {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+
+  const getProfileImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    const hostUrl = baseUrl.replace('/api', '');
+    return `${hostUrl}${imagePath}`;
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      alert("Invalid file type. Only JPG, JPEG, PNG, and WEBP are allowed.");
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      alert("File is too large. Maximum size allowed is 2MB.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('profileImage', file);
+
+    try {
+      const res = await donorsAPI.uploadPhoto(formData);
+      if (res.success) {
+        updateUser({ profileImage: res.profileImage });
+        alert("Profile picture updated successfully!");
+      } else {
+        alert(res.message || "Failed to upload profile picture.");
+      }
+    } catch (err) {
+      console.error(err);
+      const errMsg = err.response?.data?.message || "Failed to upload profile picture.";
+      alert(errMsg);
+    }
+  };
   const [donations, setDonations] = useState([]);
   const [profile, setProfile] = useState({
     name: '',
@@ -137,18 +178,41 @@ export default function UserProfile() {
             {/* Background design accents */}
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-gov-red via-gov-gold to-gov-blue"></div>
             
-            {/* Profile Picture Mock */}
-            <div className="relative w-24 h-24 mx-auto mt-4">
-              <div className="w-full h-full rounded-3xl bg-slate-100 flex items-center justify-center border-2 border-slate-100 overflow-hidden">
-                <User className="w-12 h-12 text-slate-400" />
+            {/* Profile Picture Upload Container */}
+            <div className="relative w-28 h-28 mx-auto mt-4 group">
+              <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center border-4 border-slate-200 overflow-hidden shadow-inner relative">
+                {user?.profileImage ? (
+                  <img 
+                    src={getProfileImageUrl(user.profileImage)} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <User className="w-14 h-14 text-slate-400" />
+                )}
               </div>
-              <button 
-                onClick={() => alert('Change profile photo action triggered (Mock).')}
-                className="absolute -bottom-1 -right-1 p-2 bg-gov-blue text-white rounded-xl shadow-lg border border-white hover:bg-gov-blue-dark transition-all cursor-pointer"
+              <label 
+                htmlFor="profile-pic-upload"
+                className="absolute -bottom-1 -right-1 p-2 bg-gov-blue text-white rounded-full shadow-lg border border-white hover:bg-gov-blue-dark transition-all cursor-pointer flex items-center justify-center"
                 title="Change Avatar"
               >
                 <Camera className="w-3.5 h-3.5" />
-              </button>
+                <input 
+                  type="file"
+                  id="profile-pic-upload"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
+            <div className="text-center">
+              <label 
+                htmlFor="profile-pic-upload" 
+                className="text-xs font-bold text-gov-blue hover:text-gov-blue-dark hover:underline cursor-pointer flex items-center justify-center gap-1 mt-1"
+              >
+                📷 Upload Photo
+              </label>
             </div>
 
             {/* Profile Info */}
@@ -204,13 +268,28 @@ export default function UserProfile() {
                 </span>
               </div>
 
-              {/* Body (Name, Blood group, QR Code) */}
-              <div className="grid grid-cols-12 gap-4 items-center">
-                {/* Info (8 cols) */}
-                <div className="col-span-8 space-y-2">
+              {/* Body (Photo, Info, QR Code) */}
+              <div className="grid grid-cols-12 gap-2 items-center">
+                {/* Profile Photo (3 cols) */}
+                <div className="col-span-3">
+                  <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden border border-white/20 shadow-inner">
+                    {user?.profileImage ? (
+                      <img 
+                        src={getProfileImageUrl(user.profileImage)} 
+                        alt="Profile" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-6 h-6 text-slate-400" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Info (6 cols) */}
+                <div className="col-span-6 space-y-2">
                   <div>
                     <span className="block text-[7px] uppercase font-bold text-slate-400">Donor Name</span>
-                    <span className="text-xs font-bold text-white tracking-wide block">{profile.name}</span>
+                    <span className="text-xs font-bold text-white tracking-wide block truncate max-w-[130px]">{profile.name}</span>
                   </div>
                   <div>
                     <span className="block text-[7px] uppercase font-bold text-slate-400">Blood Group</span>
@@ -218,9 +297,9 @@ export default function UserProfile() {
                   </div>
                 </div>
 
-                {/* QR Code (4 cols) */}
-                <div className="col-span-4 flex justify-end">
-                  <div className="w-16 h-16 bg-white p-1 rounded-lg shadow-sm border border-slate-100 flex items-center justify-center">
+                {/* QR Code (3 cols) */}
+                <div className="col-span-3 flex justify-end">
+                  <div className="w-12 h-12 bg-white p-1 rounded-lg shadow-sm border border-slate-100 flex items-center justify-center">
                     <svg viewBox="0 0 100 100" className="w-full h-full text-slate-900" fill="currentColor">
                       {/* Stylized QR Code grids */}
                       <path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z" />

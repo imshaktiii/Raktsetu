@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
+import { indiaStatesDistricts } from '../data/indiaStatesDistricts';
 import { 
   ShieldAlert, 
   Award, 
@@ -35,6 +36,7 @@ export default function Register() {
     handleSubmit,
     trigger,
     watch,
+    setValue,
     formState: { errors }
   } = useForm({
     mode: 'onChange',
@@ -60,6 +62,19 @@ export default function Register() {
   });
 
   const passwordValue = watch('password');
+  const selectedState = watch('state');
+  const [stateSearch, setStateSearch] = useState('');
+  const [showStateDropdown, setShowStateDropdown] = useState(false);
+
+  useEffect(() => {
+    setValue('district', '');
+  }, [selectedState, setValue]);
+
+  const stateKeys = Object.keys(indiaStatesDistricts);
+  const filteredStates = stateKeys.filter(st =>
+    st.toLowerCase().includes(stateSearch.toLowerCase())
+  );
+  const availableDistricts = selectedState ? (indiaStatesDistricts[selectedState] || []) : [];
 
   // Define steps validation fields
   const stepFields = {
@@ -468,29 +483,68 @@ export default function Register() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
+                    <div className="relative">
                       <label className="block text-xs font-bold text-slate-600 uppercase mb-1">State</label>
                       <input
+                        type="hidden"
+                        {...register('state', { required: 'State is required' })}
+                      />
+                      <input
                         type="text"
-                        placeholder="e.g. Delhi"
+                        placeholder="Search & select State"
+                        value={stateSearch}
+                        onChange={(e) => {
+                          setStateSearch(e.target.value);
+                          setShowStateDropdown(true);
+                          if (e.target.value !== selectedState) {
+                            setValue('state', '');
+                          }
+                        }}
+                        onFocus={() => setShowStateDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowStateDropdown(false), 200)}
                         className={`w-full p-2.5 rounded-xl border focus:outline-none text-sm transition-colors ${
                           errors.state ? 'border-red-500 focus:border-red-500 bg-red-50/10' : 'border-slate-200 focus:border-gov-blue'
                         }`}
-                        {...register('state', { required: 'State is required' })}
                       />
+                      {showStateDropdown && (
+                        <div className="absolute z-10 w-full mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg">
+                          {filteredStates.map((st) => (
+                            <div
+                              key={st}
+                              onClick={() => {
+                                setValue('state', st, { shouldValidate: true });
+                                setStateSearch(st);
+                                setShowStateDropdown(false);
+                              }}
+                              className="px-4 py-2 hover:bg-slate-50 cursor-pointer text-sm font-semibold text-slate-700"
+                            >
+                              {st}
+                            </div>
+                          ))}
+                          {filteredStates.length === 0 && (
+                            <div className="px-4 py-2 text-slate-400 text-sm">No states found</div>
+                          )}
+                        </div>
+                      )}
                       {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state.message}</p>}
                     </div>
 
                     <div>
                       <label className="block text-xs font-bold text-slate-600 uppercase mb-1">District</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Central Delhi"
+                      <select
+                        disabled={!selectedState}
                         className={`w-full p-2.5 rounded-xl border focus:outline-none text-sm transition-colors ${
                           errors.district ? 'border-red-500 focus:border-red-500 bg-red-50/10' : 'border-slate-200 focus:border-gov-blue'
-                        }`}
+                        } ${!selectedState ? 'bg-slate-100 cursor-not-allowed text-slate-400' : 'bg-white'}`}
                         {...register('district', { required: 'District is required' })}
-                      />
+                      >
+                        <option value="">Select District</option>
+                        {availableDistricts.map((dist) => (
+                          <option key={dist} value={dist}>
+                            {dist}
+                          </option>
+                        ))}
+                      </select>
                       {errors.district && <p className="text-red-500 text-xs mt-1">{errors.district.message}</p>}
                     </div>
                   </div>
