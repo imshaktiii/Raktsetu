@@ -29,13 +29,13 @@ export function AuthProvider({ children }) {
       const data = await authAPI.login(credentials);
       
       localStorage.setItem('raktsetu_token', data.token);
-      localStorage.setItem('raktsetu_user', JSON.stringify(data.user));
+      localStorage.setItem('raktsetu_user', JSON.stringify(data.user || data.donor));
       
       setToken(data.token);
-      setUser(data.user);
-      return data.user;
+      setUser(data.user || data.donor);
+      return data.user || data.donor;
     } catch (err) {
-      const errMsg = err.message || 'Authentication failed. Please verify credentials.';
+      const errMsg = err.response?.data?.message || err.message || 'Authentication failed. Please verify credentials.';
       setError(errMsg);
       throw new Error(errMsg);
     } finally {
@@ -50,13 +50,13 @@ export function AuthProvider({ children }) {
       const data = await authAPI.register(userData);
       
       localStorage.setItem('raktsetu_token', data.token);
-      localStorage.setItem('raktsetu_user', JSON.stringify(data.user));
+      localStorage.setItem('raktsetu_user', JSON.stringify(data.user || data.donor));
       
       setToken(data.token);
-      setUser(data.user);
-      return data.user;
+      setUser(data.user || data.donor);
+      return data.user || data.donor;
     } catch (err) {
-      const errMsg = err.message || 'Registration failed. Please check form parameters.';
+      const errMsg = err.response?.data?.message || err.message || 'Registration failed. Please check form parameters.';
       setError(errMsg);
       throw new Error(errMsg);
     } finally {

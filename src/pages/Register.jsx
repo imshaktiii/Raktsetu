@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../context/AuthContext';
 import { 
   ShieldAlert, 
   Award, 
@@ -19,6 +20,8 @@ export default function Register() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(null);
+  const { register: registerUser } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -72,13 +75,37 @@ export default function Register() {
     setStep((prev) => prev - 1);
   };
 
-  const onSubmit = (_data) => {
+  const onSubmit = async (data) => {
     setLoading(true);
-    // Simulate API registration call
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    try {
+      const birthDate = new Date(data.dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+
+      await registerUser({
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        bloodGroup: data.bloodGroup,
+        age,
+        gender: data.gender,
+        city: data.city,
+        state: data.state,
+        address: data.address
+      });
+
       setSuccess(true);
-    }, 1500);
+    } catch (err) {
+      setError(err.message || 'Registration failed. Please verify credentials.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleModalClose = () => {
@@ -234,6 +261,12 @@ export default function Register() {
 
             {/* Form Steps Container */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-xs font-bold text-red-600 animate-shake">
+                  <ShieldAlert className="w-4 h-4 text-red-500 shrink-0 animate-pulse" />
+                  <span>{error}</span>
+                </div>
+              )}
               
               {/* STEP 1: Personal Info */}
               {step === 1 && (

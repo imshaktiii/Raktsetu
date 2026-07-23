@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../context/AuthContext';
 import { 
   Shield, 
   KeyRound, 
@@ -21,7 +22,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+  const [error, setError] = useState(null);
 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -60,12 +63,11 @@ export default function Login() {
     }, 1200);
   };
 
-  const onLoginSubmit = (_data) => {
+  const onLoginSubmit = async (data) => {
     setLoading(true);
-
-    // Mock Login authentication
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    try {
+      await login({ email: data.email, password: data.password, role });
       setSuccess(true);
       setTimeout(() => {
         if (role === 'hospital') {
@@ -77,8 +79,12 @@ export default function Login() {
         } else {
           navigate('/dashboard');
         }
-      }, 1500);
-    }, 1500);
+      }, 1000);
+    } catch (err) {
+      setError(err.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -194,6 +200,12 @@ export default function Login() {
 
               {/* Login Form */}
               <form onSubmit={handleSubmit(onLoginSubmit)} className="space-y-4">
+                {error && (
+                  <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2 text-xs font-bold text-red-600 animate-shake">
+                    <Shield className="w-4 h-4 text-red-500 shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
                 
                 {/* Method 1: Password Authenticate */}
                 {loginMethod === 'password' ? (
