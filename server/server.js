@@ -15,6 +15,7 @@ const campRoutes = require("./routes/bloodCampRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
+const bloodStockRoutes = require("./routes/bloodStockRoutes");
 
 const app = express();
 
@@ -27,24 +28,30 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  "https://raktsetu-git-main-dux-sa.vercel.app",
+  "https://raktsetu-nu.vercel.app",
   "http://localhost:5173",
   "http://127.0.0.1:5173"
 ].filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
+    const cleanOrigin = origin.replace(/\/$/, "");
+    const cleanAllowed = allowedOrigins.map(url => url.replace(/\/$/, ""));
+    if (cleanAllowed.includes(cleanOrigin)) {
       return callback(null, true);
     } else {
       return callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Authorization", "Content-Type"],
   credentials: true
-}));
-app.use(express.json());
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
@@ -55,6 +62,7 @@ app.use("/api/camps", campRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/certificate", certificateRoutes);
+app.use("/api/blood-stock", bloodStockRoutes);
 
 
 // Home Route
