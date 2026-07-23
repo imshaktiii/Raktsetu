@@ -82,6 +82,11 @@ function App() {
                   <Certificate />
                 </ProtectedRoute>
               } />
+              <Route path="/certificate" element={
+                <ProtectedRoute>
+                  <Certificate />
+                </ProtectedRoute>
+              } />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

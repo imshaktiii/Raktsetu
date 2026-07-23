@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { dashboardAPI } from '../api/dashboard';
 import DashboardCard from '../components/DashboardCard';
 import { 
@@ -13,7 +14,7 @@ import {
   LineChart, 
   Line
 } from 'recharts';
-import { Loader2, AlertTriangle, Calendar, MapPin } from 'lucide-react';
+import { Loader2, AlertTriangle, Calendar, MapPin, Award } from 'lucide-react';
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -89,14 +90,25 @@ export default function Dashboard() {
   return (
     <div className="w-full min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Page Title Header */}
-      <div className="max-w-7xl mx-auto space-y-2">
-        <span className="inline-block text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-gov-blue/10 text-gov-blue rounded-md border border-gov-blue/5">
-          E-Raktkosh Unified National Dashboard
-        </span>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">National Hub Statistics</h1>
-        <p className="text-xs text-slate-500 max-w-xl">
-          Real-time MERN aggregation of registered voluntary donors, active emergency requests, and scheduled blood camps.
-        </p>
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="space-y-2">
+          <span className="inline-block text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 bg-gov-blue/10 text-gov-blue rounded-md border border-gov-blue/5">
+            E-Raktkosh Unified National Dashboard
+          </span>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">National Hub Statistics</h1>
+          <p className="text-xs text-slate-500 max-w-xl">
+            Real-time MERN aggregation of registered voluntary donors, active emergency requests, and scheduled blood camps.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/certificate"
+            className="px-4 py-2.5 bg-gov-red hover:bg-gov-red-dark text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shrink-0 cursor-pointer text-center"
+          >
+            <Award className="w-4 h-4 text-white animate-pulse" />
+            Blood Donation Certificate
+          </Link>
+        </div>
       </div>
 
       {/* Stats Cards Section */}

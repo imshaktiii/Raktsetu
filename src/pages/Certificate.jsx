@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { certificateAPI } from '../api/certificate';
 import { 
   Loader2, 
@@ -12,14 +13,24 @@ import {
 } from 'lucide-react';
 
 export default function Certificate() {
-  const { donorId } = useParams();
+  const { donorId: paramDonorId } = useParams();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [donorData, setDonorData] = useState(null);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
 
+  // Read logged-in donor
+  const localUser = JSON.parse(localStorage.getItem('raktsetu_user') || '{}');
+  const donorId = paramDonorId || user?.id || user?._id || localUser.id || localUser._id;
+
   useEffect(() => {
     const fetchCertificate = async () => {
+      if (!donorId) {
+        setError('No registered donor found in session. Please log in.');
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       setError(null);
       try {

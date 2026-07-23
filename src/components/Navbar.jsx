@@ -28,6 +28,7 @@ export default function Navbar() {
     { name: 'Profile', path: '/profile' },
     { name: 'Notifications', path: '/notifications' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Certificate', path: '/certificate' },
     { name: 'Hospital Portal', path: '/hospital-dashboard' },
     { name: 'Blood Bank Portal', path: '/bank-dashboard' },
     { name: 'Admin Portal', path: '/admin-dashboard' },
