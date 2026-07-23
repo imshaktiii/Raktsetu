@@ -149,8 +149,8 @@ export default function Home() {
       {/* 1. Hero Section */}
       <section className="relative bg-gradient-to-br from-slate-50 via-red-50/20 to-blue-50/20 py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         {/* Animated Background Details */}
-        <div className="absolute top-1/4 -right-16 w-80 h-80 bg-gov-red/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 -left-16 w-80 h-80 bg-gov-blue/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 -right-16 w-80 h-80 bg-gov-red/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-10 -left-16 w-80 h-80 bg-gov-blue/5 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
