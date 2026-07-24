@@ -26,24 +26,34 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  "https://raktsetu-git-main-dux-sa.vercel.app",
-  "https://raktsetu-nu.vercel.app",
-  "http://localhost:5173",
-  "http://127.0.0.1:5173"
-].filter(Boolean);
-
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
+    
     const cleanOrigin = origin.replace(/\/$/, "");
-    const cleanAllowed = allowedOrigins.map(url => url.replace(/\/$/, ""));
-    if (cleanAllowed.includes(cleanOrigin)) {
+    
+    // Allow localhost (various ports)
+    if (
+      cleanOrigin.startsWith("http://localhost:") ||
+      cleanOrigin.startsWith("http://127.0.0.1:")
+    ) {
       return callback(null, true);
-    } else {
-      return callback(new Error("Not allowed by CORS"));
     }
+    
+    // Allow any Vercel deployment URL matching *.vercel.app
+    if (cleanOrigin.endsWith(".vercel.app")) {
+      return callback(null, true);
+    }
+    
+    // Allow FRONTEND_URL from env configuration
+    if (process.env.FRONTEND_URL) {
+      const cleanFrontendUrl = process.env.FRONTEND_URL.replace(/\/$/, "");
+      if (cleanOrigin === cleanFrontendUrl) {
+        return callback(null, true);
+      }
+    }
+    
+    return callback(new Error("Not allowed by CORS"));
   },
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Authorization", "Content-Type"],
